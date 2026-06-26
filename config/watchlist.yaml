@@ -1,0 +1,48 @@
+# Watchlist — the HUMAN-IN-THE-LOOP sourcing input. Drop any lead you've hand-found here
+# (a hackathon project, a stealth repo, a name from a call) and Signal diligences it with the
+# SAME pipeline as GitHub-sourced candidates: enrich (code_health / pre_public / social /
+# onchain / team) -> score against config/thesis.yaml -> digest -> memo. Triage flag, not a verdict.
+#
+# Each entry:
+#   name           (required)
+#   github_repo    "owner/repo" — fill once resolved; leave "" if no public repo found (don't guess)
+#   url            project / demo URL (optional; defaults to the github repo if set)
+#   summary        one-line description (drives thesis-fit scoring)
+#   tags           thesis theme names (config/thesis.yaml themes[].name)
+#   stage          e.g. hackathon, pre-seed, stealth
+#   source_note    where it came from / handles — shown as the signal_metric
+#   raw            optional pass-through signal fields the scorer reads directly, e.g.
+#                  hackathon_win / post_event_active (the pre_public "kept shipping" gate)
+watchlist:
+  - name: ENShell
+    github_repo: "0xenshell/sdk"      # verified: desc matches ("Core SDK for ENShell … enforce agent permissions")
+    url: ""
+    summary: "ENS-aware shell that checks an agent's proposed tx against policy before signing; blocks prompt-injection-driven transactions. Scans prompts, decodes transactions, enforces agent permissions, routes actions through an on-chain firewall."
+    tags: [agent_control_planes, ai_x_crypto]
+    stage: hackathon
+    source_note: "ETHGlobal Cannes 2026 finalist · repo 0xenshell/sdk · @CodeQuillClaim · last commit 2026-04-05 — NO commits after the hackathon (did not persist)"
+    raw:
+      hackathon_win: true
+      post_event_active: false       # VERIFIED live: 0 commits since 2026-04-06
+
+  - name: DIVE
+    github_repo: "derek2403/cannes2026"  # team-lead's Cannes 2026 repo (no description; matched by author+timing — UNCONFIRMED as DIVE specifically)
+    url: ""
+    summary: "AI swarm oracle verifying real-world truth for prediction markets + autonomous on-chain settlement."
+    tags: [agent_control_planes, defi_infra, ai_x_crypto]
+    stage: hackathon
+    source_note: "ETHGlobal Cannes 2026 finalist · @derek2403 @avoisavo @cedricctf11a @ilovetofupeach · repo derek2403/cannes2026 (no desc; author+timing match, not confirmed) · last commit 2026-04-05 — NO commits after the hackathon"
+    raw:
+      hackathon_win: true
+      post_event_active: false       # VERIFIED live: 0 commits since 2026-04-06
+
+  - name: Corpus
+    github_repo: ""                  # no public repo found — name too generic to resolve confidently
+    url: ""
+    summary: "Turn any product into an autonomous AI agent corp (runs GTM, trades, treasury) with protocol-level shared wallets and on-chain reputation."
+    tags: [ai_x_crypto, defi_infra]
+    stage: hackathon
+    source_note: "ETHGlobal Cannes 2026 finalist · no public repo found (could not resolve confidently — not fabricating one)"
+    raw:
+      hackathon_win: true
+      post_event_active: false

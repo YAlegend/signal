@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Local config & secrets
+.env
+
+# Runtime artifacts
+*.db
+*.db-journal
+
+# Keep out/ sample digests in the repo as examples; ignore everything else generated.

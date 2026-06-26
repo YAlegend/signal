@@ -1,0 +1,11 @@
+{
+  "_comment": "Sample Messari AI / research response (defensive-parse fixture for research_context).",
+  "data": {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "Agent-permissioning / intent-vs-execution control planes are attracting top crypto funds (e.g. Polychain, Archetype) at seed in 2026. The strongest open risk is defensibility: incumbent wallets and frontier model providers can ship native guardrails, so a standalone policy layer must prove neutral, cross-wallet adoption rather than a single-integration demo."
+      }
+    ]
+  }
+}

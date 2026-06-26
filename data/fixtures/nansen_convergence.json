@@ -1,0 +1,16 @@
+{
+  "_comment": "Before/after token-holdings snapshots for 3 curated smart-money wallets, to test on-chain convergence. Between before and after, wallets W1/W2/W3 all newly hold TOKEN_X (convergence 3); only the low-quality W4 newly holds TOKEN_JUNK.",
+  "wallet_quality": { "0xw1": 0.95, "0xw2": 0.93, "0xw3": 0.90, "0xw4": 0.20 },
+  "before": {
+    "0xw1": ["0xusdc", "0xweth"],
+    "0xw2": ["0xusdc"],
+    "0xw3": ["0xweth"],
+    "0xw4": ["0xdoge"]
+  },
+  "after": {
+    "0xw1": ["0xusdc", "0xweth", "0xtoken_x"],
+    "0xw2": ["0xusdc", "0xtoken_x"],
+    "0xw3": ["0xweth", "0xtoken_x"],
+    "0xw4": ["0xdoge", "0xtoken_junk"]
+  }
+}

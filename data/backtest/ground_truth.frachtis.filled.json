@@ -1,0 +1,846 @@
+[
+  {
+    "company": "Index Network",
+    "obvious_date": "2025-08-12",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "ai_x_crypto",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://index.network",
+      "github_repo": "indexnetwork/index",
+      "x": "@indexnetwork_"
+    },
+    "note": "Discovery/context protocol for agents. obvious_date = portfolio-listing date (proxy). Verify github org + fill windows via reconstruct.py.",
+    "windows": {
+      "-60d": {
+        "stars": 55,
+        "stars_prev": 55,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "",
+        "tags": []
+      },
+      "-30d": {
+        "stars": 55,
+        "stars_prev": 55,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "",
+        "tags": []
+      },
+      "-14d": {
+        "stars": 57,
+        "stars_prev": 57,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "",
+        "tags": []
+      }
+    }
+  },
+  {
+    "company": "OyaChat",
+    "obvious_date": "2025-06-12",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "ai_x_crypto",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://oya.chat",
+      "github": "",
+      "x": "@OyaChatApp"
+    },
+    "note": "Agent chat / consumer (Oya Protocol; John Shutt thanked in Frachtis essays). Verify handles.",
+    "windows": {
+      "-60d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      },
+      "-30d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      },
+      "-14d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      }
+    }
+  },
+  {
+    "company": "Lys Labs",
+    "obvious_date": "2025-04-15",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "ai_x_crypto",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://lyslabs.ai",
+      "github": "",
+      "x": "@LYS_Labs"
+    },
+    "note": "Real-time on-chain intelligence layer for AI agents on Solana. Frachtis 'why we backed' post 2025-08-20.",
+    "windows": {
+      "-60d": {
+        "has_signal": true,
+        "summary": "",
+        "tags": []
+      },
+      "-30d": {
+        "has_signal": true,
+        "summary": "",
+        "tags": []
+      },
+      "-14d": {
+        "has_signal": true,
+        "summary": "",
+        "tags": []
+      }
+    }
+  },
+  {
+    "company": "Enclave Money",
+    "obvious_date": "2025-04-15",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "defi_infra",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://enclave.money",
+      "github": "",
+      "x": ""
+    },
+    "note": "Payments / chain-abstraction (verify exact category and handles).",
+    "windows": {
+      "-60d": {
+        "has_signal": true,
+        "summary": "Blockchain access platform",
+        "tags": [
+          "blockchain",
+          "developers",
+          "liquidity",
+          "access",
+          "network",
+          "crypto"
+        ]
+      },
+      "-30d": {
+        "has_signal": true,
+        "summary": "Blockchain access platform",
+        "tags": [
+          "blockchain",
+          "developers",
+          "liquidity",
+          "access",
+          "network",
+          "crypto"
+        ]
+      },
+      "-14d": {
+        "has_signal": true,
+        "summary": "Blockchain access platform",
+        "tags": [
+          "blockchain",
+          "developers",
+          "liquidity",
+          "access",
+          "network",
+          "crypto"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Turtle Club",
+    "obvious_date": "2025-04-15",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "defi_infra",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://turtle.club",
+      "github": "",
+      "x": ""
+    },
+    "note": "DeFi liquidity / distribution protocol (verify).",
+    "windows": {
+      "-60d": {
+        "has_signal": false,
+        "summary": "Phantom liquidity protocol",
+        "tags": [
+          "web3",
+          "liquidity",
+          "protocol",
+          "defi",
+          "crypto"
+        ]
+      },
+      "-30d": {
+        "has_signal": true,
+        "summary": "Phantom liquidity protocol",
+        "tags": [
+          "web3",
+          "liquidity",
+          "protocol",
+          "defi",
+          "crypto"
+        ]
+      },
+      "-14d": {
+        "has_signal": true,
+        "summary": "Phantom liquidity protocol",
+        "tags": [
+          "web3",
+          "liquidity",
+          "protocol",
+          "defi",
+          "crypto"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Bless",
+    "obvious_date": "2025-04-15",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "crypto_infra",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://bless.network",
+      "github_repo": "blessnetwork/b7s",
+      "x": ""
+    },
+    "note": "Decentralized compute / DePIN. github_repo verified: blessnetwork/b7s (node daemon).",
+    "windows": {
+      "-60d": {
+        "stars": 29,
+        "stars_prev": 29,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "BLESS Network node daemon",
+        "tags": [
+          "bless",
+          "network",
+          "node",
+          "daemon",
+          "github"
+        ]
+      },
+      "-30d": {
+        "stars": 30,
+        "stars_prev": 30,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "BLESS Network node daemon",
+        "tags": [
+          "bless",
+          "network",
+          "node",
+          "daemon",
+          "github"
+        ]
+      },
+      "-14d": {
+        "stars": 30,
+        "stars_prev": 30,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "BLESS Network node daemon",
+        "tags": [
+          "bless",
+          "network",
+          "node",
+          "daemon",
+          "github"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Infinity Ground",
+    "obvious_date": "2024-11-08",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "ai_x_crypto",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://infinityground.ai",
+      "github": "",
+      "x": ""
+    },
+    "note": "On-chain AI app building platform (verify).",
+    "windows": {
+      "-60d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      },
+      "-30d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      },
+      "-14d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      }
+    }
+  },
+  {
+    "company": "Hyve",
+    "obvious_date": "2024-11-08",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "crypto_infra",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "",
+      "github": "",
+      "x": ""
+    },
+    "note": "Category uncertain \u2014 confirm what Hyve does before scoring; fill site/github.",
+    "windows": {
+      "-60d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      },
+      "-30d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      },
+      "-14d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      }
+    }
+  },
+  {
+    "company": "Aizel",
+    "obvious_date": "2024-03-24",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "ai_x_crypto",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://aizel.ai",
+      "github": "",
+      "x": ""
+    },
+    "note": "Verifiable / confidential AI inference (Aizel Network). Earliest Frachtis deal listed (2024-03). Verify handles.",
+    "windows": {
+      "-60d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      },
+      "-30d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      },
+      "-14d": {
+        "has_signal": false,
+        "summary": "",
+        "tags": []
+      }
+    }
+  },
+  {
+    "company": "Fireplace",
+    "obvious_date": "2026-03-11",
+    "first_touch_date": "",
+    "stage_at_T": "pre-seed/seed",
+    "sourcing_channel": "unknown (public portfolio)",
+    "segment": "defi_infra",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {
+      "site": "https://pro.fireplace.gg",
+      "github": "",
+      "x": "@fireplacegg"
+    },
+    "note": "Trading interface for prediction markets on Polymarket. Frachtis 'why we backed' 2026-03-11.",
+    "windows": {
+      "-60d": {
+        "has_signal": true,
+        "summary": "Prediction markets platform",
+        "tags": [
+          "prediction",
+          "markets",
+          "platform",
+          "trading",
+          "crypto"
+        ]
+      },
+      "-30d": {
+        "has_signal": true,
+        "summary": "Prediction markets platform",
+        "tags": [
+          "prediction",
+          "markets",
+          "platform",
+          "trading",
+          "crypto"
+        ]
+      },
+      "-14d": {
+        "has_signal": true,
+        "summary": "Prediction markets platform",
+        "tags": [
+          "prediction",
+          "markets",
+          "platform",
+          "trading",
+          "crypto"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Iron Finance (IRON/TITAN)",
+    "obvious_date": "2021-06-15",
+    "first_touch_date": "",
+    "stage_at_T": "launched",
+    "sourcing_channel": "public",
+    "segment": "defi_infra",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {
+      "site": "https://iron.finance",
+      "github_repo": "IronFinance/iron-polygon-contracts"
+    },
+    "summary_at_T": "Partial-collateral algorithmic stablecoin with a two-token model and liquidity-mining vaults on Polygon.",
+    "tags_at_T": [
+      "defi",
+      "stablecoin",
+      "vault",
+      "liquidity"
+    ],
+    "note": "REAL negative (repo-verified). Partial-collateral algo-stablecoin; TITAN crashed ~$64->$0 in crypto's first large-scale DeFi bank run (16 Jun 2021). obvious_date=peak-hype proxy. Sources: coindesk.com/markets/2021/06/17 bank-run postmortem; en.wikipedia.org/wiki/Iron_Finance.",
+    "windows": {
+      "-60d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Partial-collateral algorithmic stablecoin with a two-token model and liquidity-mining vaults on Polygon.",
+        "tags": [
+          "defi",
+          "stablecoin",
+          "vault",
+          "liquidity"
+        ]
+      },
+      "-30d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Partial-collateral algorithmic stablecoin with a two-token model and liquidity-mining vaults on Polygon.",
+        "tags": [
+          "defi",
+          "stablecoin",
+          "vault",
+          "liquidity"
+        ]
+      },
+      "-14d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Partial-collateral algorithmic stablecoin with a two-token model and liquidity-mining vaults on Polygon.",
+        "tags": [
+          "defi",
+          "stablecoin",
+          "vault",
+          "liquidity"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Saddle Finance",
+    "obvious_date": "2021-11-01",
+    "first_touch_date": "",
+    "stage_at_T": "seed/launched",
+    "sourcing_channel": "public",
+    "segment": "defi_infra",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {
+      "site": "https://saddle.finance",
+      "github_repo": "saddle-finance/saddle-contract"
+    },
+    "summary_at_T": "Stableswap automated market maker for efficient pegged-asset liquidity.",
+    "tags_at_T": [
+      "defi",
+      "liquidity",
+      "stablecoin"
+    ],
+    "note": "REAL negative (repo-verified). a16z/Polychain-backed stableswap AMM; team formally proposed wind-down/dissolution 8 Aug 2023 (post-Curve-hack risk), liquidating treasury. obvious_date=peak-hype proxy. Sources: coindesk.com/tech/2023/08/08 wind-down; bsc.news Saddle wind-down.",
+    "windows": {
+      "-60d": {
+        "stars": 45,
+        "stars_prev": 45,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Stableswap automated market maker for efficient pegged-asset liquidity.",
+        "tags": [
+          "defi",
+          "liquidity",
+          "stablecoin"
+        ]
+      },
+      "-30d": {
+        "stars": 49,
+        "stars_prev": 47,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Stableswap automated market maker for efficient pegged-asset liquidity.",
+        "tags": [
+          "defi",
+          "liquidity",
+          "stablecoin"
+        ]
+      },
+      "-14d": {
+        "stars": 51,
+        "stars_prev": 50,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Stableswap automated market maker for efficient pegged-asset liquidity.",
+        "tags": [
+          "defi",
+          "liquidity",
+          "stablecoin"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Fei Protocol / Tribe DAO",
+    "obvious_date": "2021-04-01",
+    "first_touch_date": "",
+    "stage_at_T": "launched",
+    "sourcing_channel": "public",
+    "segment": "defi_infra",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {
+      "site": "https://fei.money",
+      "github_repo": "fei-protocol/fei-protocol-core"
+    },
+    "summary_at_T": "Algorithmic stablecoin using protocol-controlled value and bonding curves for decentralized liquidity.",
+    "tags_at_T": [
+      "defi",
+      "stablecoin",
+      "liquidity"
+    ],
+    "note": "REAL negative (repo-verified). a16z/Coinbase-backed algo-stablecoin; ~$80M Rari Fuse hack (Apr 2022), founder proposed TIP-121 to dissolve Tribe DAO, wound down 2022-23. obvious_date=peak-hype proxy. Sources: axios.com 2022/08/25 TribeDAO; cointelegraph.com Fei dissolve.",
+    "windows": {
+      "-60d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Algorithmic stablecoin using protocol-controlled value and bonding curves for decentralized liquidity.",
+        "tags": [
+          "defi",
+          "stablecoin",
+          "liquidity"
+        ]
+      },
+      "-30d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Algorithmic stablecoin using protocol-controlled value and bonding curves for decentralized liquidity.",
+        "tags": [
+          "defi",
+          "stablecoin",
+          "liquidity"
+        ]
+      },
+      "-14d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Algorithmic stablecoin using protocol-controlled value and bonding curves for decentralized liquidity.",
+        "tags": [
+          "defi",
+          "stablecoin",
+          "liquidity"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Multichain (Anyswap)",
+    "obvious_date": "2022-01-01",
+    "first_touch_date": "",
+    "stage_at_T": "growth",
+    "sourcing_channel": "public",
+    "segment": "crypto_infra",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {
+      "site": "https://multichain.org",
+      "github_repo": "anyswap/multichain-smart-contracts"
+    },
+    "summary_at_T": "Cross-chain router and bridge for moving assets and messages across chains.",
+    "tags_at_T": [
+      "bridge",
+      "interoperability",
+      "infrastructure"
+    ],
+    "note": "REAL negative (repo-verified). Largest cross-chain bridge (~$10B+ peak TVL); after CEO arrest + ~$125M+ unauthorized drain, officially ceased operations 14 Jul 2023. obvious_date=peak-hype proxy. Sources: coindesk.com/business/2023/07/14 ceases operations; chainalysis.com Multichain exploit.",
+    "windows": {
+      "-60d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Cross-chain router and bridge for moving assets and messages across chains.",
+        "tags": [
+          "bridge",
+          "interoperability",
+          "infrastructure"
+        ]
+      },
+      "-30d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Cross-chain router and bridge for moving assets and messages across chains.",
+        "tags": [
+          "bridge",
+          "interoperability",
+          "infrastructure"
+        ]
+      },
+      "-14d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Cross-chain router and bridge for moving assets and messages across chains.",
+        "tags": [
+          "bridge",
+          "interoperability",
+          "infrastructure"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Nomad Bridge",
+    "obvious_date": "2022-06-01",
+    "first_touch_date": "",
+    "stage_at_T": "seed",
+    "sourcing_channel": "public",
+    "segment": "crypto_infra",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {
+      "site": "https://nomad.xyz",
+      "github_repo": "nomad-xyz/nomad-monorepo"
+    },
+    "summary_at_T": "Optimistic cross-chain messaging protocol and bridge for interoperability between chains.",
+    "tags_at_T": [
+      "bridge",
+      "interoperability",
+      "data availability"
+    ],
+    "note": "REAL negative (repo-verified, archived). Cross-chain messaging bridge drained ~$190M (1 Aug 2022) in 'mob' exploit; Dec-2022 relaunch fizzled, team offline, monorepo archived. obvious_date=peak-hype proxy. Sources: cnbc.com 2022/08/05 $190M hack; medium.com/coinmonks Nomad 'dead in the water'.",
+    "windows": {
+      "-60d": {
+        "stars": 48,
+        "stars_prev": 47,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Optimistic cross-chain messaging protocol and bridge for interoperability between chains.",
+        "tags": [
+          "bridge",
+          "interoperability",
+          "data availability"
+        ]
+      },
+      "-30d": {
+        "stars": 56,
+        "stars_prev": 53,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Optimistic cross-chain messaging protocol and bridge for interoperability between chains.",
+        "tags": [
+          "bridge",
+          "interoperability",
+          "data availability"
+        ]
+      },
+      "-14d": {
+        "stars": 60,
+        "stars_prev": 57,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Optimistic cross-chain messaging protocol and bridge for interoperability between chains.",
+        "tags": [
+          "bridge",
+          "interoperability",
+          "data availability"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Zerebro",
+    "obvious_date": "2025-01-02",
+    "first_touch_date": "",
+    "stage_at_T": "token-launched",
+    "sourcing_channel": "public",
+    "segment": "ai_x_crypto",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {
+      "site": "https://zerebro.org",
+      "github_repo": "blorm-network/ZerePy"
+    },
+    "summary_at_T": "Autonomous on-chain AI agent that generates content and acts across social and crypto, with the open ZerePy agent framework.",
+    "tags_at_T": [
+      "ai agent",
+      "autonomous",
+      "agentic",
+      "onchain agent"
+    ],
+    "note": "REAL negative (repo-verified). Hyped autonomous AI-agent (ZEREBRO ~$700-800M peak mcap, 2 Jan 2025); co-founder faked death 4 May 2025 as exit-liquidity scheme, token -95%, ZerePy framework abandoned (no commits since Mar 2025). obvious_date=peak-hype proxy. Sources: cryptobriefing.com Zerebro scandal; sfstandard.com 2025/05/08 faked death.",
+    "windows": {
+      "-60d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Autonomous on-chain AI agent that generates content and acts across social and crypto, with the open ZerePy agent framework.",
+        "tags": [
+          "ai agent",
+          "autonomous",
+          "agentic",
+          "onchain agent"
+        ]
+      },
+      "-30d": {
+        "stars": 1,
+        "stars_prev": 1,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Autonomous on-chain AI agent that generates content and acts across social and crypto, with the open ZerePy agent framework.",
+        "tags": [
+          "ai agent",
+          "autonomous",
+          "agentic",
+          "onchain agent"
+        ]
+      },
+      "-14d": {
+        "stars": 4,
+        "stars_prev": 1,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Autonomous on-chain AI agent that generates content and acts across social and crypto, with the open ZerePy agent framework.",
+        "tags": [
+          "ai agent",
+          "autonomous",
+          "agentic",
+          "onchain agent"
+        ]
+      }
+    }
+  },
+  {
+    "company": "Showtime",
+    "obvious_date": "2021-05-05",
+    "first_touch_date": "",
+    "stage_at_T": "seed",
+    "sourcing_channel": "public",
+    "segment": "consumer_social",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {
+      "site": "https://showtime.xyz",
+      "github_repo": "showtime-xyz/showtime-frontend"
+    },
+    "summary_at_T": "Consumer social network for sharing and discovering NFTs \u2014 a mobile-first social layer for collectibles.",
+    "tags_at_T": [
+      "consumer",
+      "social",
+      "mobile"
+    ],
+    "note": "REAL negative (repo-verified, archived). VC-backed 'Instagram for NFTs' ($7.6M seed from Paradigm/Dragonfly/3LAU, May 2021); monorepo archived read-only Dec 2023, rebranded successor (Drakula) now a farewell/shutdown page. obvious_date=peak-hype proxy. Sources: coindesk.com/business/2021/05/05 $7.6M raise; github archived repo.",
+    "windows": {
+      "-60d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Consumer social network for sharing and discovering NFTs \u2014 a mobile-first social layer for collectibles.",
+        "tags": [
+          "consumer",
+          "social",
+          "mobile"
+        ]
+      },
+      "-30d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Consumer social network for sharing and discovering NFTs \u2014 a mobile-first social layer for collectibles.",
+        "tags": [
+          "consumer",
+          "social",
+          "mobile"
+        ]
+      },
+      "-14d": {
+        "stars": 0,
+        "stars_prev": 0,
+        "delta_days": 7,
+        "has_signal": true,
+        "summary": "Consumer social network for sharing and discovering NFTs \u2014 a mobile-first social layer for collectibles.",
+        "tags": [
+          "consumer",
+          "social",
+          "mobile"
+        ]
+      }
+    }
+  }
+]

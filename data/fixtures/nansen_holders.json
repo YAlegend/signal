@@ -1,0 +1,10 @@
+{
+  "_comment": "Sample Nansen holders response (defensive-parse fixture).",
+  "data": {
+    "topHolders": [
+      { "entity": "Paradigm", "address": "0xddd", "balanceUsd": 2500000 },
+      { "name": "Jump Crypto", "address": "0xeee", "balanceUsd": 1200000 },
+      { "label": "0xunknownfund", "address": "0xfff", "balanceUsd": 50000 }
+    ]
+  }
+}

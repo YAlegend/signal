@@ -1,0 +1,59 @@
+name: Sourcing run
+
+# Cloud "Run" button: Actions tab -> "Sourcing run" -> Run workflow.
+# Also runnable on a schedule (uncomment below). Uses the runner's built-in
+# GITHUB_TOKEN (lifts GitHub API rate limits) and the heuristic scorer by
+# default, so it needs ZERO secrets. Add GROQ_API_KEY as a repo secret only
+# if you want LLM-written rationales (set scorer: groq when launching).
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Candidates per source"
+        default: "40"
+      scorer:
+        description: "Scorer provider (heuristic / groq / auto)"
+        default: "heuristic"
+  # schedule:                 # the agent runs itself, daily at 06:00 UTC
+  #   - cron: "0 6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install (live extras)
+        run: pip install -e ".[live]"
+
+      - name: Run sourcing
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          # auto-provided by Actions
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}          # optional; used only if scorer=groq/auto
+          SIGNAL_LLM_PROVIDER: ${{ github.event.inputs.scorer || 'heuristic' }}
+        run: |
+          PYTHONPATH=src python -m signalfund --limit "${{ github.event.inputs.limit || '40' }}"
+
+      - name: Show digest in the run summary
+        if: always()
+        run: |
+          echo "### Signal digest" >> "$GITHUB_STEP_SUMMARY"
+          cat out/digest.md >> "$GITHUB_STEP_SUMMARY" || echo "(no digest produced)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload digest + dashboard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: signal-digest
+          path: |
+            out/digest.md
+            out/digest.json
+            out/dashboard.html

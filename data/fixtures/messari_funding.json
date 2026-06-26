@@ -1,0 +1,23 @@
+{
+  "_comment": "Sample Messari funding-rounds response (defensive-parse fixture). A late-stage, well-funded company (Nava-like) that the stage gate should down-rank.",
+  "data": {
+    "fundingRounds": [
+      {
+        "stage": "Seed",
+        "raisedAmountUsd": 4000000,
+        "announcedDate": "2025-02-10",
+        "investors": [{"name": "Some Angel", "lead": true}]
+      },
+      {
+        "stage": "Series B",
+        "raisedAmountUsd": 83000000,
+        "announcedDate": "2026-04-14",
+        "investors": [
+          {"name": "Polychain Capital", "lead": true},
+          {"name": "Archetype", "lead": true},
+          {"name": "Random Micro Fund", "lead": false}
+        ]
+      }
+    ]
+  }
+}

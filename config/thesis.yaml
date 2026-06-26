@@ -1,0 +1,73 @@
+fund: Frachtis
+updated: 2026-06-23
+# Crypto-native pre-seed. Durable value accrues to the control planes agents rely on.
+# "Permission is the scarce resource in an age of infinite capability."
+thesis_summary: >
+  Frachtis backs agent-native crypto applications and infrastructure that abstract
+  complexity, collapse workflows, execute reliably, personalise deeply, interoperate
+  openly and deliver trusted outcomes. The durable winners are the control planes
+  agents rely on: identity, permissions, routing, settlement, reputation and
+  verifiability.
+
+# Themes the scorer rewards. weight is relative; keywords are matched case-insensitively.
+themes:
+  - name: agent_control_planes
+    label: Agent control planes / trust infra
+    weight: 1.0
+    keywords: [policy, permission, delegation, intent, guardrail, escrow, settlement,
+               identity, attestation, verifiable, audit, routing, authorization, recourse]
+    open_question: Is the trust layer defensible versus incumbent wallets and the model providers?
+  - name: ai_x_crypto
+    label: AI x crypto / agentic
+    weight: 0.9
+    keywords: [ai agent, autonomous, agentic, x402, agent payment, mcp, inference, llm, onchain agent]
+    open_question: Does this need crypto, or is it a wrapper that a frontier lab ships natively?
+  - name: defi_infra
+    label: DeFi & financial infra
+    weight: 0.7
+    keywords: [defi, liquidity, perps, prediction market, stablecoin, vault, restaking, treasury, reconciliation]
+    open_question: Where does sustainable, non-incentivised demand come from?
+  - name: crypto_infra
+    label: Crypto infrastructure
+    weight: 0.7
+    keywords: [zk, zero-knowledge, rollup, consensus, data availability, sequencer, interoperability, bridge, account abstraction]
+    open_question: Is this a real bottleneck today, or premature infrastructure?
+  - name: post_quantum
+    label: Post-quantum security
+    weight: 0.6
+    keywords: [post-quantum, pqc, ml-dsa, ml-kem, lattice, quantum-safe, crypto-agility]
+    open_question: Is the migration window near enough to be venture-timed?
+  - name: consumer_social
+    label: Consumer / social
+    weight: 0.5
+    keywords: [consumer, social, wallet, mobile, frames, farcaster, payments app]
+    open_question: Is there a wedge to distribution, or does it die in a crowded field?
+
+# Down-rank obvious noise.
+anti_signals:
+  keywords: [meme coin, presale, airdrop farming, get rich, guaranteed return, 1000x, ponzi, pump]
+
+stage_preference:
+  prefer: [pre-seed, seed, stealth, testnet, early, devnet]
+  avoid: [series b, series c, public, ico, listed]
+
+# Tunable caps (max points) for each additive signal sub-score — retune the composite
+# without code changes. Values below are the built-in defaults; omit a key to keep its
+# default, lower one to de-emphasise a signal, raise it to lean in. Each signal is
+# reputation-weighted / ratio-based, and the cap is the most it can add on top of
+# fit + traction + credibility. See docs/SIGNALS_BUILD_SPEC.md.
+signal_weights:
+  code_health: 15    # commit-velocity acceleration + contributor diversity (Gini)
+  onchain: 12        # real stablecoin inflow + sticky non-mercenary TVL + holder spread
+  team: 20           # prior exits / repeat same-domain founder / technical CEO — highest predictive value
+  social: 12         # Farcaster smart-follower convergence + OpenRank, gated by Neynar score
+  pre_public: 15     # retroactive grants / hackathon-with-persistence / research exit
+
+# How the final composite blends thesis-fit against the combined quality signals.
+# The score is FIT*fit + SIGNAL*signal_strength (+ credibility), so fit stays dominant
+# and strong deals separate instead of all pinning at 100. Values are relative and
+# normalised, so 60/40 and 0.6/0.4 are equivalent. Raise `signal` to let corroboration
+# matter more; raise `fit` to lean harder on thesis match.
+composite_weights:
+  fit: 60       # thesis fit — the dominant component
+  signal: 40    # combined quality signals (traction + code/onchain/team/social/pre_public)

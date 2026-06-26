@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "github-velocity": {
+      "command": "/Users/yas/Documents/Projects/Frachtis-Signal/.venv/bin/python",
+      "args": ["mcp_servers/github_velocity/server.py"],
+      "env": { "GITHUB_TOKEN": "${GITHUB_TOKEN}", "SIGNAL_DB": "signal.db" }
+    },
+    "blockscout": {
+      "type": "http",
+      "url": "https://mcp.blockscout.com/mcp"
+    },
+    "harmonic": {
+      "type": "http",
+      "url": "https://mcp.api.harmonic.ai"
+    },
+    "nansen": {
+      "type": "http",
+      "url": "https://mcp.nansen.ai/mcp",
+      "headers": { "Authorization": "Bearer ${NANSEN_API_KEY}" }
+    }
+  }
+}

@@ -1,0 +1,401 @@
+[
+  {
+    "candidate": {
+      "name": "veritas-zk/veritas",
+      "source": "github",
+      "url": "https://github.com/veritas-zk/veritas",
+      "summary": "Zero-knowledge proofs that an AI agent acted within its mandate without revealing the underlying data. Preventative, policy-bound verifiability for high-stakes agent actions.",
+      "signal_metric": "240 stars/day (+1,680 in 7d)",
+      "tags": [
+        "zk",
+        "verifiable",
+        "agentic",
+        "attestation"
+      ],
+      "raw": {
+        "stars": 1680,
+        "velocity_per_day": 240,
+        "language": "Go"
+      },
+      "discovered_at": "2026-06-26T17:35:02.065985+00:00"
+    },
+    "score": 69.8,
+    "thesis_fit": "Moderate fit (69.8/100). Matches Agent control planes / trust infra, AI x crypto / agentic, Crypto infrastructure \u2014 the agent-native, control-plane positioning the fund backs. Signal: 240 stars/day (+1,680 in 7d). Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
+    "matched_themes": [
+      "agent_control_planes",
+      "ai_x_crypto",
+      "crypto_infra"
+    ],
+    "citations": [
+      "https://github.com/veritas-zk/veritas"
+    ],
+    "flags": [],
+    "risks": [
+      "llm_fallback:ModuleNotFoundError"
+    ],
+    "subscores": {
+      "fit": 100.0,
+      "traction": 71.5,
+      "traction_bonus": 10.7,
+      "signal_strength": 12.1,
+      "credibility_adj": 5.0,
+      "code_health": 0.0,
+      "onchain": 0.0,
+      "team": 0.0,
+      "social": 0.0,
+      "pre_public": 0.0
+    }
+  },
+  {
+    "candidate": {
+      "name": "mandate-labs/mandate",
+      "source": "github",
+      "url": "https://github.com/mandate-labs/mandate",
+      "summary": "Open policy engine that binds AI agents to user-defined permissions: spending limits, allow-lists and intent constraints enforced at settlement. Verifiable, auditable delegation for autonomous agents.",
+      "signal_metric": "612 stars/day (+4,300 in 7d)",
+      "tags": [
+        "ai-agent",
+        "permissions",
+        "policy",
+        "settlement",
+        "verifiable"
+      ],
+      "raw": {
+        "stars": 4300,
+        "velocity_per_day": 612,
+        "language": "Rust",
+        "commit_accel": 2.1,
+        "contributor_gini": 0.22,
+        "contributors": 14
+      },
+      "discovered_at": "2026-06-26T17:35:02.065556+00:00"
+    },
+    "score": 67.9,
+    "thesis_fit": "Moderate fit (67.9/100). Matches Agent control planes / trust infra, AI x crypto / agentic \u2014 the agent-native, control-plane positioning the fund backs. Signal: 612 stars/day (+4,300 in 7d). Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
+    "matched_themes": [
+      "agent_control_planes",
+      "ai_x_crypto"
+    ],
+    "citations": [
+      "https://github.com/mandate-labs/mandate"
+    ],
+    "flags": [],
+    "risks": [
+      "llm_fallback:ModuleNotFoundError"
+    ],
+    "subscores": {
+      "fit": 84.2,
+      "traction": 83.6,
+      "traction_bonus": 12.5,
+      "signal_strength": 30.9,
+      "credibility_adj": 5.0,
+      "code_health": 15.0,
+      "onchain": 0.0,
+      "team": 0.0,
+      "social": 0.0,
+      "pre_public": 0.0
+    }
+  },
+  {
+    "candidate": {
+      "name": "PayRail",
+      "source": "harmonic",
+      "url": "https://payrail.xyz",
+      "summary": "Neutral payment + escrow rail for agent-to-agent commerce. Agents discover services, pay and settle directly with policy-bound, atomic do-and-pay execution.",
+      "signal_metric": "pre-seed, stealth; 3 ex-Stripe/Lightning founders",
+      "tags": [
+        "x402",
+        "agent payment",
+        "escrow",
+        "settlement",
+        "routing"
+      ],
+      "raw": {
+        "stage": "pre-seed",
+        "team_signal": "ex-Stripe",
+        "prior_exit": true,
+        "exit_size_usd": 120000000,
+        "repeat_founder_count": 2,
+        "same_domain": true,
+        "technical_ceo": true,
+        "team_size": 3
+      },
+      "discovered_at": "2026-06-26T17:35:02.065979+00:00"
+    },
+    "score": 64.1,
+    "thesis_fit": "Moderate fit (64.1/100). Matches Agent control planes / trust infra, AI x crypto / agentic \u2014 the agent-native, control-plane positioning the fund backs. Signal: pre-seed, stealth; 3 ex-Stripe/Lightning founders. Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
+    "matched_themes": [
+      "agent_control_planes",
+      "ai_x_crypto"
+    ],
+    "citations": [
+      "https://payrail.xyz"
+    ],
+    "flags": [],
+    "risks": [
+      "llm_fallback:ModuleNotFoundError"
+    ],
+    "subscores": {
+      "fit": 84.2,
+      "traction": null,
+      "traction_bonus": 0.0,
+      "signal_strength": 21.3,
+      "credibility_adj": 5.0,
+      "code_health": 0.0,
+      "onchain": 0.0,
+      "team": 19.0,
+      "social": 0.0,
+      "pre_public": 0.0
+    }
+  },
+  {
+    "candidate": {
+      "name": "lattice-vault/signer",
+      "source": "github",
+      "url": "https://github.com/lattice-vault/signer",
+      "summary": "Post-quantum signing for self-custody wallets. Drop-in ML-DSA signatures and a crypto-agility layer so chains can rotate signature schemes without a hard fork.",
+      "signal_metric": "95 stars/day (+665 in 7d)",
+      "tags": [
+        "post-quantum",
+        "ml-dsa",
+        "wallet",
+        "crypto-agility"
+      ],
+      "raw": {
+        "stars": 665,
+        "velocity_per_day": 95,
+        "language": "Rust",
+        "commit_accel": 1.9,
+        "contributor_gini": 0.78,
+        "contributors": 3,
+        "retro_grant": true,
+        "research_exit": true,
+        "incorp_days": 120,
+        "team_size": 3,
+        "technical_ceo": true,
+        "frontier_lab_alum": true
+      },
+      "discovered_at": "2026-06-26T17:35:02.065994+00:00"
+    },
+    "score": 50.8,
+    "thesis_fit": "Moderate fit (50.8/100). Matches DeFi & financial infra, Post-quantum security, Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: 95 stars/day (+665 in 7d). Open question: Where does sustainable, non-incentivised demand come from?",
+    "matched_themes": [
+      "defi_infra",
+      "post_quantum",
+      "consumer_social"
+    ],
+    "citations": [
+      "https://github.com/lattice-vault/signer"
+    ],
+    "flags": [],
+    "risks": [
+      "llm_fallback:ModuleNotFoundError"
+    ],
+    "subscores": {
+      "fit": 52.6,
+      "traction": 59.5,
+      "traction_bonus": 8.9,
+      "signal_strength": 35.5,
+      "credibility_adj": 5.0,
+      "code_health": 2.7,
+      "onchain": 0.0,
+      "team": 9.0,
+      "social": 0.0,
+      "pre_public": 11.0
+    }
+  },
+  {
+    "candidate": {
+      "name": "Ledgerlytics",
+      "source": "harmonic",
+      "url": "https://ledgerlytics.io",
+      "summary": "Agent that automates on-chain treasury reconciliation and invoicing for crypto-native companies, with an immutable audit trail of every action it takes.",
+      "signal_metric": "seed; 40% MoM revenue growth",
+      "tags": [
+        "treasury",
+        "reconciliation",
+        "defi",
+        "audit"
+      ],
+      "raw": {
+        "stage": "seed",
+        "stablecoin_inflow_30d": 180000,
+        "real_tvl": 420000,
+        "tvl_retention": 0.75,
+        "holder_gini": 0.72
+      },
+      "discovered_at": "2026-06-26T17:35:02.065988+00:00"
+    },
+    "score": 43.0,
+    "thesis_fit": "Watch fit (43.0/100). Matches Agent control planes / trust infra, DeFi & financial infra \u2014 the agent-native, control-plane positioning the fund backs. Signal: seed; 40% MoM revenue growth. Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
+    "matched_themes": [
+      "agent_control_planes",
+      "defi_infra"
+    ],
+    "citations": [
+      "https://ledgerlytics.io"
+    ],
+    "flags": [],
+    "risks": [
+      "llm_fallback:ModuleNotFoundError"
+    ],
+    "subscores": {
+      "fit": 54.4,
+      "traction": null,
+      "traction_bonus": 0.0,
+      "signal_strength": 13.5,
+      "credibility_adj": 5.0,
+      "code_health": 0.0,
+      "onchain": 12.0,
+      "team": 0.0,
+      "social": 0.0,
+      "pre_public": 0.0
+    }
+  },
+  {
+    "candidate": {
+      "name": "Emberterm",
+      "source": "web",
+      "url": "https://emberterm.app",
+      "summary": "Unified trading terminal for prediction markets: real-time data, advanced execution and discovery across venues, plus social signal surfaces like leaderboards and wallet tracking.",
+      "signal_metric": "growing fast on Farcaster; 12k MAU",
+      "tags": [
+        "prediction market",
+        "defi",
+        "consumer",
+        "social"
+      ],
+      "raw": {
+        "stage": "seed",
+        "stablecoin_inflow_30d": 0,
+        "real_tvl": 90000,
+        "tvl_retention": 0.3,
+        "holder_gini": 0.95,
+        "smart_followers": 4,
+        "openrank_pct": 0.96,
+        "neynar_score": 0.72,
+        "account_age_days": 410
+      },
+      "discovered_at": "2026-06-26T17:35:02.065991+00:00"
+    },
+    "score": 40.2,
+    "thesis_fit": "Watch fit (40.2/100). Matches DeFi & financial infra, Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: growing fast on Farcaster; 12k MAU. Open question: Where does sustainable, non-incentivised demand come from?",
+    "matched_themes": [
+      "defi_infra",
+      "consumer_social"
+    ],
+    "citations": [
+      "https://emberterm.app"
+    ],
+    "flags": [],
+    "risks": [
+      "llm_fallback:ModuleNotFoundError"
+    ],
+    "subscores": {
+      "fit": 50.9,
+      "traction": null,
+      "traction_bonus": 0.0,
+      "signal_strength": 11.7,
+      "credibility_adj": 5.0,
+      "code_health": 0.0,
+      "onchain": 0.0,
+      "team": 0.0,
+      "social": 10.4,
+      "pre_public": 0.0
+    }
+  },
+  {
+    "candidate": {
+      "name": "Frameview",
+      "source": "web",
+      "url": "https://frameview.social",
+      "summary": "Consumer social app for sharing on-chain portfolios as Farcaster frames. Mobile-first, no clear monetisation yet.",
+      "signal_metric": "early; trending on CT",
+      "tags": [
+        "consumer",
+        "social",
+        "farcaster",
+        "mobile"
+      ],
+      "raw": {
+        "stage": "pre-seed",
+        "smart_followers": 3,
+        "openrank_pct": 0.5,
+        "neynar_score": 0.42,
+        "account_age_days": 12,
+        "hackathon_win": true,
+        "post_event_active": false
+      },
+      "discovered_at": "2026-06-26T17:35:02.065996+00:00"
+    },
+    "score": 21.4,
+    "thesis_fit": "Watch fit (21.4/100). Matches Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: early; trending on CT. Open question: Is there a wedge to distribution, or does it die in a crowded field?",
+    "matched_themes": [
+      "consumer_social"
+    ],
+    "citations": [
+      "https://frameview.social"
+    ],
+    "flags": [],
+    "risks": [
+      "llm_fallback:ModuleNotFoundError"
+    ],
+    "subscores": {
+      "fit": 26.3,
+      "traction": null,
+      "traction_bonus": 0.0,
+      "signal_strength": 1.6,
+      "credibility_adj": 5.0,
+      "code_health": 0.0,
+      "onchain": 0.0,
+      "team": 0.0,
+      "social": 1.4,
+      "pre_public": 0.0
+    }
+  },
+  {
+    "candidate": {
+      "name": "MoonRocketInu",
+      "source": "web",
+      "url": "https://moonrocketinu.lol",
+      "summary": "Meme coin presale promising guaranteed 1000x returns. Airdrop farming campaign live now.",
+      "signal_metric": "lots of CT noise",
+      "tags": [
+        "meme coin",
+        "presale",
+        "airdrop"
+      ],
+      "raw": {
+        "stage": "ico"
+      },
+      "discovered_at": "2026-06-26T17:35:02.065999+00:00"
+    },
+    "score": 0.0,
+    "thesis_fit": "Low fit (0.0/100). Triggers anti-signal: meme coin, anti-signal: presale, anti-signal: airdrop farming, anti-signal: 1000x \u2014 noise, not a backable pre-seed team. Screen out.",
+    "matched_themes": [],
+    "citations": [
+      "https://moonrocketinu.lol"
+    ],
+    "flags": [
+      "anti-signal: meme coin",
+      "anti-signal: presale",
+      "anti-signal: airdrop farming",
+      "anti-signal: 1000x"
+    ],
+    "risks": [
+      "llm_fallback:ModuleNotFoundError"
+    ],
+    "subscores": {
+      "fit": 0.0,
+      "traction": null,
+      "traction_bonus": 0.0,
+      "signal_strength": 0.0,
+      "credibility_adj": -55.0,
+      "code_health": 0.0,
+      "onchain": 0.0,
+      "team": 0.0,
+      "social": 0.0,
+      "pre_public": 0.0
+    }
+  }
+]

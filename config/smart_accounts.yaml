@@ -1,0 +1,18 @@
+# Smart accounts — the curated seed list of credible Farcaster accounts (VCs, founders,
+# researchers) the fund trusts. The `network_radar` source watches WHO THESE ACCOUNTS
+# newly converge on: when >= 2 of them start following the same obscure account between
+# runs, that account is surfaced as a candidate (partially digitizing the relationship
+# signal). Reputation-weighted by OpenRank; needs NEYNAR_API_KEY to run.
+#
+# Each entry: { fid, label }. Look up an account's numeric FID on its Warpcast profile
+# (or via Neynar). The entries below are PLACEHOLDERS — uncomment + replace with the real
+# accounts you trust (5–10 is a good seed). With all commented, network_radar returns [].
+smart_accounts:
+  # - { fid: 3,    label: "dwr.eth — Farcaster founder (placeholder)" }
+  # - { fid: 2,    label: "v — Varun Srinivasan (placeholder)" }
+  # - { fid: 1237, label: "example VC partner (placeholder)" }
+  # - { fid: 5650, label: "example repeat founder (placeholder)" }
+  # - { fid: 99,   label: "example crypto researcher (placeholder)" }
+  # - { fid: 1689, label: "example angel investor (placeholder)" }
+  # - { fid: 7960, label: "example infra builder (placeholder)" }
+  # - { fid: 4823, label: "example DeFi founder (placeholder)" }

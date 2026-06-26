@@ -1,0 +1,124 @@
+[
+  {
+    "company": "mandate-labs",
+    "first_touch_date": "2025-04-21",
+    "obvious_date": "2025-06-20",
+    "stage_at_T": "pre-seed",
+    "sourcing_channel": "public",
+    "segment": "agent_control_planes",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {"github_repo": "mandate-labs/mandate", "site": "https://mandate.xyz"},
+    "windows": {
+      "-60d": {"has_signal": true, "summary": "early policy and permission engine for ai agents", "tags": ["policy", "permission", "ai agent"], "stars": 60, "stars_prev": 30, "delta_days": 7},
+      "-30d": {"has_signal": true, "summary": "policy and permission engine binding ai agents to spending limits, verifiable at settlement", "tags": ["policy", "permission", "ai agent", "settlement", "verifiable"], "stars": 240, "stars_prev": 110, "delta_days": 7},
+      "-14d": {"has_signal": true, "summary": "policy and permission engine binding ai agents to spending limits, verifiable at settlement", "tags": ["policy", "permission", "ai agent", "settlement", "verifiable"], "stars": 900, "stars_prev": 500, "delta_days": 7}
+    }
+  },
+  {
+    "company": "veritas-zk",
+    "first_touch_date": "2025-05-01",
+    "obvious_date": "2025-06-25",
+    "stage_at_T": "pre-seed",
+    "sourcing_channel": "public",
+    "segment": "crypto_infra",
+    "outcome": "passed_regret",
+    "label": "positive",
+    "public_handles": {"github_repo": "veritas-zk/veritas", "site": "https://veritas.dev"},
+    "windows": {
+      "-60d": {"has_signal": true, "summary": "zk experiments", "tags": ["zk"], "stars": 10, "stars_prev": 6, "delta_days": 7},
+      "-30d": {"has_signal": true, "summary": "zero-knowledge proofs that an agent acted within its mandate, verifiable", "tags": ["zk", "verifiable", "agentic"], "stars": 90, "stars_prev": 30, "delta_days": 7},
+      "-14d": {"has_signal": true, "summary": "zero-knowledge proofs that an agent acted within its mandate, verifiable", "tags": ["zk", "verifiable", "agentic"], "stars": 260, "stars_prev": 120, "delta_days": 7}
+    }
+  },
+  {
+    "company": "payrail",
+    "first_touch_date": "2025-03-10",
+    "obvious_date": "2025-06-10",
+    "stage_at_T": "stealth",
+    "sourcing_channel": "warm_intro",
+    "segment": "agent_control_planes",
+    "outcome": "invested",
+    "label": "positive",
+    "public_handles": {},
+    "windows": {
+      "-60d": {"has_signal": false, "summary": "", "tags": []},
+      "-30d": {"has_signal": false, "summary": "", "tags": []},
+      "-14d": {"has_signal": false, "summary": "", "tags": []}
+    }
+  },
+  {
+    "company": "ledgerlytics",
+    "first_touch_date": "2025-05-15",
+    "obvious_date": "2025-06-22",
+    "stage_at_T": "pre-seed",
+    "sourcing_channel": "inbound",
+    "segment": "defi_infra",
+    "outcome": "passed_regret",
+    "label": "positive",
+    "public_handles": {"site": "https://ledgerlytics.io"},
+    "windows": {
+      "-30d": {"has_signal": true, "summary": "treasury tool", "tags": ["treasury"], "stars": 15, "stars_prev": 10, "delta_days": 7},
+      "-14d": {"has_signal": true, "summary": "treasury reconciliation dashboard", "tags": ["treasury", "reconciliation"], "stars": 30, "stars_prev": 18, "delta_days": 7}
+    }
+  },
+  {
+    "company": "latticevault",
+    "first_touch_date": "2025-05-20",
+    "obvious_date": "2025-06-24",
+    "stage_at_T": "pre-seed",
+    "sourcing_channel": "public",
+    "segment": "post_quantum",
+    "outcome": "passed_regret",
+    "label": "positive",
+    "public_handles": {"github_repo": "latticevault/signer"},
+    "windows": {
+      "-30d": {"has_signal": true, "summary": "post-quantum ml-dsa signer experiment", "tags": ["post-quantum", "ml-dsa"], "stars": 25, "stars_prev": 15, "delta_days": 7},
+      "-14d": {"has_signal": true, "summary": "post-quantum ml-dsa signer and crypto-agility layer for wallets", "tags": ["post-quantum", "ml-dsa", "wallet", "crypto-agility"], "stars": 70, "stars_prev": 30, "delta_days": 7}
+    }
+  },
+  {
+    "company": "hypezk",
+    "first_touch_date": "2025-04-01",
+    "obvious_date": "2025-06-01",
+    "stage_at_T": "seed",
+    "sourcing_channel": "public",
+    "segment": "crypto_infra",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {"github_repo": "hypezk/hypezk"},
+    "windows": {
+      "-60d": {"has_signal": true, "summary": "zk rollup idea", "tags": ["zk", "rollup"], "stars": 30, "stars_prev": 20, "delta_days": 7},
+      "-30d": {"has_signal": true, "summary": "verifiable zero-knowledge coprocessor and settlement rollup for autonomous agents", "tags": ["zk", "verifiable", "settlement", "agentic", "rollup"], "stars": 400, "stars_prev": 120, "delta_days": 7}
+    }
+  },
+  {
+    "company": "yieldvault",
+    "first_touch_date": "2025-04-10",
+    "obvious_date": "2025-06-05",
+    "stage_at_T": "seed",
+    "sourcing_channel": "public",
+    "segment": "defi_infra",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {"github_repo": "yieldvault/core"},
+    "windows": {
+      "-30d": {"has_signal": true, "summary": "yield aggregator vault with liquidity mining", "tags": ["defi", "vault", "liquidity"], "stars": 200, "stars_prev": 80, "delta_days": 7},
+      "-14d": {"has_signal": true, "summary": "yield aggregator vault with liquidity mining", "tags": ["defi", "vault", "liquidity"], "stars": 320, "stars_prev": 150, "delta_days": 7}
+    }
+  },
+  {
+    "company": "moonrocket",
+    "first_touch_date": "2025-05-05",
+    "obvious_date": "2025-06-02",
+    "stage_at_T": "ico",
+    "sourcing_channel": "public",
+    "segment": "consumer_social",
+    "outcome": "fizzled",
+    "label": "negative",
+    "public_handles": {"site": "https://moonrocket.lol"},
+    "windows": {
+      "-14d": {"has_signal": true, "summary": "meme coin presale promising guaranteed 1000x returns with airdrop farming", "tags": ["meme coin", "presale", "airdrop"], "stars": 0, "stars_prev": 0, "delta_days": 7}
+    }
+  }
+]

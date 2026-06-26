@@ -1,0 +1,138 @@
+{
+  "decision": "YELLOW",
+  "reason": "Sourcing works in part (segment- or channel-specific). Narrow it to where it demonstrably works; build Memo + Pulse for the rest.",
+  "metrics": {
+    "recall": 0.4,
+    "median_lead_days": 45.0,
+    "precision_proxy": 0.67,
+    "no_signal_rate": 0.2,
+    "n_positive": 5,
+    "n_negative": 3,
+    "threshold": 30.0,
+    "lead_req_days": 14
+  },
+  "companies": [
+    {
+      "company": "mandate-labs",
+      "label": "positive",
+      "outcome": "invested",
+      "channel": "public",
+      "segment": "agent_control_planes",
+      "any_signal": true,
+      "surfaced": true,
+      "lead_days": 60,
+      "best_score": 49.6,
+      "scores": {
+        "-60d": 32.0,
+        "-30d": 48.7,
+        "-14d": 49.6
+      }
+    },
+    {
+      "company": "veritas-zk",
+      "label": "positive",
+      "outcome": "passed_regret",
+      "channel": "public",
+      "segment": "crypto_infra",
+      "any_signal": true,
+      "surfaced": true,
+      "lead_days": 30,
+      "best_score": 37.4,
+      "scores": {
+        "-60d": 7.8,
+        "-30d": 36.7,
+        "-14d": 37.4
+      }
+    },
+    {
+      "company": "payrail",
+      "label": "positive",
+      "outcome": "invested",
+      "channel": "warm_intro",
+      "segment": "agent_control_planes",
+      "any_signal": false,
+      "surfaced": false,
+      "lead_days": null,
+      "best_score": 0.0,
+      "scores": {
+        "-60d": 0.0,
+        "-30d": 0.0,
+        "-14d": 0.0
+      }
+    },
+    {
+      "company": "ledgerlytics",
+      "label": "positive",
+      "outcome": "passed_regret",
+      "channel": "inbound",
+      "segment": "defi_infra",
+      "any_signal": true,
+      "surfaced": false,
+      "lead_days": null,
+      "best_score": 15.6,
+      "scores": {
+        "-30d": 7.8,
+        "-14d": 15.6
+      }
+    },
+    {
+      "company": "latticevault",
+      "label": "positive",
+      "outcome": "passed_regret",
+      "channel": "public",
+      "segment": "post_quantum",
+      "any_signal": true,
+      "surfaced": false,
+      "lead_days": null,
+      "best_score": 25.9,
+      "scores": {
+        "-30d": 13.4,
+        "-14d": 25.9
+      }
+    },
+    {
+      "company": "hypezk",
+      "label": "negative",
+      "outcome": "fizzled",
+      "channel": "public",
+      "segment": "crypto_infra",
+      "any_signal": true,
+      "surfaced": true,
+      "lead_days": 30,
+      "best_score": 68.3,
+      "scores": {
+        "-60d": 15.5,
+        "-30d": 68.3
+      }
+    },
+    {
+      "company": "yieldvault",
+      "label": "negative",
+      "outcome": "fizzled",
+      "channel": "public",
+      "segment": "defi_infra",
+      "any_signal": true,
+      "surfaced": false,
+      "lead_days": null,
+      "best_score": 24.9,
+      "scores": {
+        "-30d": 24.6,
+        "-14d": 24.9
+      }
+    },
+    {
+      "company": "moonrocket",
+      "label": "negative",
+      "outcome": "fizzled",
+      "channel": "public",
+      "segment": "consumer_social",
+      "any_signal": true,
+      "surfaced": false,
+      "lead_days": null,
+      "best_score": 0.0,
+      "scores": {
+        "-14d": 0.0
+      }
+    }
+  ]
+}

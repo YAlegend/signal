@@ -1,0 +1,64 @@
+<svg viewBox="0 0 860 610" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ttl desc" font-family="Arial, Helvetica, sans-serif">
+  <title id="ttl">How Signal works</title>
+  <desc id="desc">Business flow: thousands of startups go into Signal's four steps (source, score, memo, dashboard), producing a ranked shortlist a partner reviews and decides on, with a backtest reliability check.</desc>
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#888780"/></marker>
+  </defs>
+  <rect width="860" height="610" fill="#ffffff"/>
+
+  <text x="430" y="38" text-anchor="middle" font-size="23" font-weight="700" fill="#2C2C2A">How Signal works</text>
+  <text x="430" y="62" text-anchor="middle" font-size="13" fill="#5F5E5A">From thousands of startups to one good decision</text>
+
+  <rect x="130" y="84" width="600" height="58" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text x="430" y="110" text-anchor="middle" font-size="15" font-weight="700" fill="#2C2C2A">Thousands of new crypto + AI startups</text>
+  <text x="430" y="129" text-anchor="middle" font-size="12" fill="#5F5E5A">far too many to read by hand</text>
+
+  <line x1="430" y1="144" x2="430" y2="172" stroke="#888780" stroke-width="2" marker-end="url(#ah)"/>
+
+  <rect x="40" y="178" width="780" height="150" rx="12" fill="#F7F7F4" stroke="#E5E3DB"/>
+  <text x="430" y="201" text-anchor="middle" font-size="13" fill="#5F5E5A">Signal — runs automatically</text>
+
+  <rect x="56" y="214" width="176" height="98" rx="9" fill="#E1F5EE" stroke="#5DCAA5"/>
+  <circle cx="144" cy="239" r="12" fill="#0F6E56"/>
+  <text x="144" y="243" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">1</text>
+  <text x="144" y="272" text-anchor="middle" font-size="15" font-weight="700" fill="#04342C">Source</text>
+  <text x="144" y="292" text-anchor="middle" font-size="11.5" fill="#0F6E56">find rising companies</text>
+
+  <text x="240" y="270" text-anchor="middle" font-size="18" fill="#1D9E75">&#8594;</text>
+
+  <rect x="248" y="214" width="176" height="98" rx="9" fill="#E1F5EE" stroke="#5DCAA5"/>
+  <circle cx="336" cy="239" r="12" fill="#0F6E56"/>
+  <text x="336" y="243" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">2</text>
+  <text x="336" y="272" text-anchor="middle" font-size="15" font-weight="700" fill="#04342C">Score</text>
+  <text x="336" y="292" text-anchor="middle" font-size="11.5" fill="#0F6E56">rank vs the thesis</text>
+
+  <text x="432" y="270" text-anchor="middle" font-size="18" fill="#1D9E75">&#8594;</text>
+
+  <rect x="440" y="214" width="176" height="98" rx="9" fill="#E1F5EE" stroke="#5DCAA5"/>
+  <circle cx="528" cy="239" r="12" fill="#0F6E56"/>
+  <text x="528" y="243" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">3</text>
+  <text x="528" y="272" text-anchor="middle" font-size="15" font-weight="700" fill="#04342C">Memo</text>
+  <text x="528" y="292" text-anchor="middle" font-size="11.5" fill="#0F6E56">source-cited write-up</text>
+
+  <text x="624" y="270" text-anchor="middle" font-size="18" fill="#1D9E75">&#8594;</text>
+
+  <rect x="632" y="214" width="176" height="98" rx="9" fill="#E1F5EE" stroke="#5DCAA5"/>
+  <circle cx="720" cy="239" r="12" fill="#0F6E56"/>
+  <text x="720" y="243" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">4</text>
+  <text x="720" y="272" text-anchor="middle" font-size="15" font-weight="700" fill="#04342C">Dashboard</text>
+  <text x="720" y="292" text-anchor="middle" font-size="11.5" fill="#0F6E56">ranked digest</text>
+
+  <line x1="430" y1="328" x2="430" y2="356" stroke="#888780" stroke-width="2" marker-end="url(#ah)"/>
+
+  <rect x="130" y="360" width="600" height="52" rx="10" fill="#EAF3DE" stroke="#97C459"/>
+  <text x="430" y="390" text-anchor="middle" font-size="15" font-weight="700" fill="#173404">A short, ranked, explained shortlist</text>
+
+  <line x1="430" y1="412" x2="430" y2="440" stroke="#888780" stroke-width="2" marker-end="url(#ah)"/>
+
+  <rect x="130" y="444" width="600" height="58" rx="10" fill="#EEEDFE" stroke="#AFA9EC"/>
+  <text x="430" y="470" text-anchor="middle" font-size="15" font-weight="700" fill="#26215C">A partner reviews and decides &#8594; invests</text>
+  <text x="430" y="489" text-anchor="middle" font-size="12" fill="#534AB7">a human always makes the final call</text>
+
+  <rect x="130" y="534" width="600" height="48" rx="9" fill="#FAEEDA" stroke="#EF9F27"/>
+  <text x="430" y="563" text-anchor="middle" font-size="12.5" fill="#412402">Reliability check (backtest): would Signal have caught past winners?</text>
+</svg>

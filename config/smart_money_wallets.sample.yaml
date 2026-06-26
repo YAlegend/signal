@@ -1,0 +1,10 @@
+# Smart-money wallets — the curated, labeled wallets/funds the NansenSource watches for
+# on-chain CONVERGENCE (tokens a quorum of them NEWLY buy between runs — the on-chain twin of
+# network_radar). Each: { address, label, quality }  (quality 0..1 = reputation, gates/weights).
+# Copy this to config/smart_money_wallets.yaml and fill with the real labeled wallets you trust.
+# These are PLACEHOLDERS. With no real file, NansenSource convergence returns [].
+smart_money_wallets:
+  # - { address: "0x1111111111111111111111111111111111111111", label: "Polychain (placeholder)", quality: 0.95 }
+  # - { address: "0x2222222222222222222222222222222222222222", label: "Paradigm (placeholder)",  quality: 0.93 }
+  # - { address: "0x3333333333333333333333333333333333333333", label: "a16z crypto (placeholder)", quality: 0.92 }
+  # - { address: "0x4444444444444444444444444444444444444444", label: "Smart trader (placeholder)", quality: 0.70 }

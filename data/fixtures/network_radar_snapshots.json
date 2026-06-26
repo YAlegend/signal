@@ -1,0 +1,14 @@
+{
+  "_comment": "Two point-in-time snapshots of three smart accounts' Farcaster 'following' sets, for testing network_radar's diff + convergence logic offline (no keys). Smart accounts: 1001, 1002, 1003. Between 'before' and 'after', all three newly follow target 9999 (convergence 3); only 1003 newly follows 8888 (convergence 1).",
+  "smart_account_reputation": { "1001": 0.92, "1002": 0.80, "1003": 0.20 },
+  "before": {
+    "1001": ["5001", "5002"],
+    "1002": ["5001", "5003"],
+    "1003": ["5004"]
+  },
+  "after": {
+    "1001": ["5001", "5002", "9999"],
+    "1002": ["5001", "5003", "9999"],
+    "1003": ["5004", "9999", "8888"]
+  }
+}

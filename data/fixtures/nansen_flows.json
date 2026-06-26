@@ -1,0 +1,13 @@
+{
+  "_comment": "Sample Nansen smart-money-flows response (defensive-parse fixture). Strong net inflow + meaningful smart-money holder share -> should boost the onchain sub-score.",
+  "data": {
+    "netflow": { "usd_30d": 5200000 },
+    "smartMoneyHolders": 42,
+    "smartMoneyHolderShare": 0.31,
+    "topHolders": [
+      { "label": "Polychain Capital", "address": "0xaaa", "balanceUsd": 1800000 },
+      { "label": "Wintermute", "address": "0xbbb", "balanceUsd": 900000 },
+      { "label": "unknown wallet", "address": "0xccc", "balanceUsd": 100000 }
+    ]
+  }
+}

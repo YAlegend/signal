@@ -1,0 +1,85 @@
+[
+  {
+    "name": "mandate-labs/mandate",
+    "source": "github",
+    "url": "https://github.com/mandate-labs/mandate",
+    "summary": "Open policy engine that binds AI agents to user-defined permissions: spending limits, allow-lists and intent constraints enforced at settlement. Verifiable, auditable delegation for autonomous agents.",
+    "signal_metric": "612 stars/day (+4,300 in 7d)",
+    "tags": ["ai-agent", "permissions", "policy", "settlement", "verifiable"],
+    "raw": {"stars": 4300, "velocity_per_day": 612, "language": "Rust",
+            "commit_accel": 2.1, "contributor_gini": 0.22, "contributors": 14}
+  },
+  {
+    "name": "PayRail",
+    "source": "harmonic",
+    "url": "https://payrail.xyz",
+    "summary": "Neutral payment + escrow rail for agent-to-agent commerce. Agents discover services, pay and settle directly with policy-bound, atomic do-and-pay execution.",
+    "signal_metric": "pre-seed, stealth; 3 ex-Stripe/Lightning founders",
+    "tags": ["x402", "agent payment", "escrow", "settlement", "routing"],
+    "raw": {"stage": "pre-seed", "team_signal": "ex-Stripe",
+            "prior_exit": true, "exit_size_usd": 120000000, "repeat_founder_count": 2,
+            "same_domain": true, "technical_ceo": true, "team_size": 3}
+  },
+  {
+    "name": "veritas-zk/veritas",
+    "source": "github",
+    "url": "https://github.com/veritas-zk/veritas",
+    "summary": "Zero-knowledge proofs that an AI agent acted within its mandate without revealing the underlying data. Preventative, policy-bound verifiability for high-stakes agent actions.",
+    "signal_metric": "240 stars/day (+1,680 in 7d)",
+    "tags": ["zk", "verifiable", "agentic", "attestation"],
+    "raw": {"stars": 1680, "velocity_per_day": 240, "language": "Go"}
+  },
+  {
+    "name": "Ledgerlytics",
+    "source": "harmonic",
+    "url": "https://ledgerlytics.io",
+    "summary": "Agent that automates on-chain treasury reconciliation and invoicing for crypto-native companies, with an immutable audit trail of every action it takes.",
+    "signal_metric": "seed; 40% MoM revenue growth",
+    "tags": ["treasury", "reconciliation", "defi", "audit"],
+    "raw": {"stage": "seed", "stablecoin_inflow_30d": 180000, "real_tvl": 420000,
+            "tvl_retention": 0.75, "holder_gini": 0.72}
+  },
+  {
+    "name": "Emberterm",
+    "source": "web",
+    "url": "https://emberterm.app",
+    "summary": "Unified trading terminal for prediction markets: real-time data, advanced execution and discovery across venues, plus social signal surfaces like leaderboards and wallet tracking.",
+    "signal_metric": "growing fast on Farcaster; 12k MAU",
+    "tags": ["prediction market", "defi", "consumer", "social"],
+    "raw": {"stage": "seed", "stablecoin_inflow_30d": 0, "real_tvl": 90000,
+            "tvl_retention": 0.3, "holder_gini": 0.95,
+            "smart_followers": 4, "openrank_pct": 0.96, "neynar_score": 0.72, "account_age_days": 410}
+  },
+  {
+    "name": "lattice-vault/signer",
+    "source": "github",
+    "url": "https://github.com/lattice-vault/signer",
+    "summary": "Post-quantum signing for self-custody wallets. Drop-in ML-DSA signatures and a crypto-agility layer so chains can rotate signature schemes without a hard fork.",
+    "signal_metric": "95 stars/day (+665 in 7d)",
+    "tags": ["post-quantum", "ml-dsa", "wallet", "crypto-agility"],
+    "raw": {"stars": 665, "velocity_per_day": 95, "language": "Rust",
+            "commit_accel": 1.9, "contributor_gini": 0.78, "contributors": 3,
+            "retro_grant": true, "research_exit": true, "incorp_days": 120,
+            "team_size": 3, "technical_ceo": true, "frontier_lab_alum": true}
+  },
+  {
+    "name": "Frameview",
+    "source": "web",
+    "url": "https://frameview.social",
+    "summary": "Consumer social app for sharing on-chain portfolios as Farcaster frames. Mobile-first, no clear monetisation yet.",
+    "signal_metric": "early; trending on CT",
+    "tags": ["consumer", "social", "farcaster", "mobile"],
+    "raw": {"stage": "pre-seed", "smart_followers": 3, "openrank_pct": 0.5,
+            "neynar_score": 0.42, "account_age_days": 12,
+            "hackathon_win": true, "post_event_active": false}
+  },
+  {
+    "name": "MoonRocketInu",
+    "source": "web",
+    "url": "https://moonrocketinu.lol",
+    "summary": "Meme coin presale promising guaranteed 1000x returns. Airdrop farming campaign live now.",
+    "signal_metric": "lots of CT noise",
+    "tags": ["meme coin", "presale", "airdrop"],
+    "raw": {"stage": "ico"}
+  }
+]

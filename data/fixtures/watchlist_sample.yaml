@@ -1,0 +1,17 @@
+# Offline fixture for evals/watchlist_check.py — a tiny watchlist to assert that a YAML
+# lead becomes a scored Candidate with no keys / no network.
+watchlist:
+  - name: PolicyGuard
+    github_repo: example-org/policy-guard
+    summary: "Permission and policy engine that binds AI agents to spending limits and intent constraints, enforced at settlement. Verifiable, auditable delegation."
+    tags: [agent_control_planes, ai_x_crypto]
+    stage: hackathon
+    source_note: "fixture lead"
+    raw:
+      hackathon_win: true
+      post_event_active: true
+  - name: OffThesisToy
+    summary: "A weekend to-do list app."
+    tags: []
+    stage: hackathon
+    source_note: "fixture lead (off-thesis control)"
