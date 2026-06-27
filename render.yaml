@@ -1,0 +1,16 @@
+# Render Blueprint — free public demo of the Signal web UI.
+# Runs in demo / heuristic mode with NO secrets: bundled fixtures + the deterministic
+# heuristic scorer. The hosted copy binds 0.0.0.0 (via SIGNAL_WEB_HOST); local runs are
+# unaffected and stay localhost-only. Render injects $PORT, which webapp.py reads.
+services:
+  - type: web
+    name: signal-demo
+    runtime: python
+    plan: free
+    buildCommand: pip install pyyaml
+    startCommand: PYTHONPATH=src python -m signalfund.webapp --no-open
+    envVars:
+      - key: SIGNAL_WEB_HOST
+        value: 0.0.0.0
+      - key: SIGNAL_LLM_PROVIDER
+        value: heuristic
