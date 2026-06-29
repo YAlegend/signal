@@ -1,5 +1,5 @@
 # Signal — dealflow digest
-_2026-06-27 · 8 candidates, ranked by thesis fit_
+_2026-06-29 · 8 candidates, ranked by thesis fit_
 
 ## 1. veritas-zk/veritas  ·  69.8/100
 **Source:** github  ·  **Signal:** 240 stars/day (+1,680 in 7d)  ·  **Themes:** agent_control_planes, ai_x_crypto, crypto_infra
