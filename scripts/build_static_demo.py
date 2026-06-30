@@ -36,18 +36,23 @@ DATA = DOCS / "data"
 MEMOS = DATA / "memos"
 
 BANNER = (
-    '<div id="demo-banner">Static demo — read-only snapshot. '
-    "Compute actions (Run, memo, thesis save) run locally: "
-    "<code>python -m signalfund.webapp</code>. "
-    '<a href="https://github.com/YAlegend/signal" target="_blank" rel="noopener">Source</a>.'
+    '<div id="demo-banner">Static demo — a read-only snapshot of the live UI. '
+    "Run, memo &amp; thesis-edit work locally via <code>python -m signalfund.webapp</code>. "
+    '<a href="https://github.com/YAlegend/signal" target="_blank" rel="noopener">Source&nbsp;↗</a>'
     "</div>"
 )
+# Static-only CSS. The banner sits ABOVE .app (not inside it — .app is a 2-col grid, so a child
+# would hijack a grid cell). Body becomes a vertical flex: banner on top, .app fills the rest and
+# keeps its own internal scroll.
 BANNER_CSS = """
-/* ---- static-demo banner (GitHub Pages only) ---- */
-#demo-banner{position:sticky;top:0;z-index:50;background:#1b2330;color:#cfe;
-  font-size:13px;padding:8px 16px;border-bottom:1px solid #2c3a4f;text-align:center}
-#demo-banner code{background:#0d131c;padding:1px 6px;border-radius:4px}
-#demo-banner a{color:#7db6ff}
+/* ---- static-demo banner + layout (GitHub Pages only) ---- */
+body{display:flex;flex-direction:column;height:100vh;margin:0}
+.app{height:auto;min-height:0;flex:1 1 auto}
+#demo-banner{flex:0 0 auto;background:#13243b;color:#cfe3ff;font-size:13px;line-height:1.5;
+  padding:9px 18px;text-align:center;border-bottom:1px solid #243b5e}
+#demo-banner code{background:#0a1422;padding:1px 6px;border-radius:4px;font-size:12px}
+#demo-banner a{color:#7db6ff;text-decoration:none;font-weight:600}
+#demo-banner a:hover{text-decoration:underline}
 """
 
 
@@ -65,8 +70,8 @@ def build_index(src_html: str) -> str:
             # turn on static mode before app.js loads
             .replace('<script src="app.js"></script>',
                      '<script>window.SIGNAL_STATIC=true;</script>\n  <script src="app.js"></script>')
-            # demo banner at the top of the app shell
-            .replace('<div class="app">', f'<div class="app">\n    {BANNER}'))
+            # demo banner ABOVE the app shell (sibling, not a grid child)
+            .replace('<div class="app">', f'{BANNER}\n  <div class="app">'))
     if "window.SIGNAL_STATIC" not in html:
         raise SystemExit("build_index: failed to inject static flag — index.html markup changed?")
     return html

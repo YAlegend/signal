@@ -264,8 +264,11 @@ table.grid th { color: var(--muted); font-weight: 600; }
 .toast.show { opacity: 1; transform: none; }
 .toast.err { border-color: #7f1d1d; }
 
-/* ---- static-demo banner (GitHub Pages only) ---- */
-#demo-banner{position:sticky;top:0;z-index:50;background:#1b2330;color:#cfe;
-  font-size:13px;padding:8px 16px;border-bottom:1px solid #2c3a4f;text-align:center}
-#demo-banner code{background:#0d131c;padding:1px 6px;border-radius:4px}
-#demo-banner a{color:#7db6ff}
+/* ---- static-demo banner + layout (GitHub Pages only) ---- */
+body{display:flex;flex-direction:column;height:100vh;margin:0}
+.app{height:auto;min-height:0;flex:1 1 auto}
+#demo-banner{flex:0 0 auto;background:#13243b;color:#cfe3ff;font-size:13px;line-height:1.5;
+  padding:9px 18px;text-align:center;border-bottom:1px solid #243b5e}
+#demo-banner code{background:#0a1422;padding:1px 6px;border-radius:4px;font-size:12px}
+#demo-banner a{color:#7db6ff;text-decoration:none;font-weight:600}
+#demo-banner a:hover{text-decoration:underline}
