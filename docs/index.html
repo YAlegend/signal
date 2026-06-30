@@ -4,10 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Signal — dealflow</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=f8f52327">
 </head>
 <body>
-  <div id="demo-banner">Static demo — a read-only snapshot of the live UI. Run, memo &amp; thesis-edit work locally via <code>python -m signalfund.webapp</code>. <a href="https://github.com/YAlegend/signal" target="_blank" rel="noopener">Source&nbsp;↗</a></div>
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
@@ -28,6 +27,7 @@
       <div class="sidebar-foot">
         <div id="scorer-pill" class="pill">scorer: …</div>
         <div class="muted">scores are a triage aid, not a verdict — a human makes the call.</div>
+        <div class="muted" style="opacity:.75">Static demo — Run / memo / thesis-save run locally (<code>python -m signalfund.webapp</code>). <a href="https://github.com/YAlegend/signal" target="_blank" rel="noopener" style="color:#7db6ff">Source ↗</a></div>
       </div>
     </aside>
 
@@ -207,6 +207,6 @@
     </main>
   </div>
   <script>window.SIGNAL_STATIC=true;</script>
-  <script src="app.js"></script>
+  <script src="app.js?v=f8f52327"></script>
 </body>
 </html>

@@ -35,25 +35,14 @@ DOCS = ROOT / "docs"
 DATA = DOCS / "data"
 MEMOS = DATA / "memos"
 
-BANNER = (
-    '<div id="demo-banner">Static demo — a read-only snapshot of the live UI. '
-    "Run, memo &amp; thesis-edit work locally via <code>python -m signalfund.webapp</code>. "
-    '<a href="https://github.com/YAlegend/signal" target="_blank" rel="noopener">Source&nbsp;↗</a>'
-    "</div>"
-)
-# Static-only CSS. The banner sits ABOVE .app (not inside it — .app is a 2-col grid, so a child
-# would hijack a grid cell). Body becomes a vertical flex: banner on top, .app fills the rest and
-# keeps its own internal scroll.
-BANNER_CSS = """
-/* ---- static-demo banner + layout (GitHub Pages only) ---- */
-body{display:flex;flex-direction:column;height:100vh;margin:0}
-.app{height:auto;min-height:0;flex:1 1 auto}
-#demo-banner{flex:0 0 auto;background:#13243b;color:#cfe3ff;font-size:13px;line-height:1.5;
-  padding:9px 18px;text-align:center;border-bottom:1px solid #243b5e}
-#demo-banner code{background:#0a1422;padding:1px 6px;border-radius:4px;font-size:12px}
-#demo-banner a{color:#7db6ff;text-decoration:none;font-weight:600}
-#demo-banner a:hover{text-decoration:underline}
-"""
+# The static page is visually IDENTICAL to the local app — no banner, no layout overrides (a
+# top banner hijacked the .app grid). The "static demo" note goes into the existing sidebar
+# footer (normal flow, can't disturb the grid). Compute actions still explain themselves via the
+# app's own toast when clicked.
+FOOT_NOTE = ('<div class="muted" style="opacity:.75">Static demo — Run / memo / thesis-save run '
+             'locally (<code>python -m signalfund.webapp</code>). '
+             '<a href="https://github.com/YAlegend/signal" target="_blank" rel="noopener" '
+             'style="color:#7db6ff">Source ↗</a></div>')
 
 
 def _write(path: pathlib.Path, text: str) -> None:
@@ -62,18 +51,24 @@ def _write(path: pathlib.Path, text: str) -> None:
     print(f"  wrote {path.relative_to(ROOT)}  ({len(text)} bytes)")
 
 
-def build_index(src_html: str) -> str:
-    """Transform the served SPA shell into a standalone static page."""
+def build_index(src_html: str, ver: str) -> str:
+    """Transform the served SPA shell into a standalone static page — identical to the local
+    app, plus: relative asset paths, the static-mode flag, a sidebar-footer demo note, and a
+    cache-busting ?v= on the assets so browsers don't serve a stale CSS/JS."""
     html = (src_html
-            .replace('href="/styles.css"', 'href="styles.css"')
-            .replace('src="/app.js"', 'src="app.js"')
+            # relative + cache-busted asset paths (Pages/CDN + browser caching)
+            .replace('href="/styles.css"', f'href="styles.css?v={ver}"')
+            .replace('src="/app.js"', f'src="app.js?v={ver}"')
             # turn on static mode before app.js loads
-            .replace('<script src="app.js"></script>',
-                     '<script>window.SIGNAL_STATIC=true;</script>\n  <script src="app.js"></script>')
-            # demo banner ABOVE the app shell (sibling, not a grid child)
-            .replace('<div class="app">', f'{BANNER}\n  <div class="app">'))
+            .replace('<script src="app.js?v=',
+                     '<script>window.SIGNAL_STATIC=true;</script>\n  <script src="app.js?v=')
+            # unobtrusive demo note inside the existing sidebar footer (normal flow — can't break grid)
+            .replace('      </div>\n    </aside>',
+                     f'        {FOOT_NOTE}\n      </div>\n    </aside>'))
     if "window.SIGNAL_STATIC" not in html:
         raise SystemExit("build_index: failed to inject static flag — index.html markup changed?")
+    if FOOT_NOTE not in html:
+        raise SystemExit("build_index: failed to inject footer note — sidebar markup changed?")
     return html
 
 
@@ -102,9 +97,13 @@ def main() -> int:
                    json.dumps({"name": name, "markdown": p.read_text(encoding="utf-8")}, indent=0))
 
     print("[build-static-demo] emitting static SPA assets…")
-    _write(DOCS / "app.js", (WEB / "app.js").read_text(encoding="utf-8"))
-    _write(DOCS / "styles.css", (WEB / "styles.css").read_text(encoding="utf-8") + BANNER_CSS)
-    _write(DOCS / "index.html", build_index((WEB / "index.html").read_text(encoding="utf-8")))
+    import hashlib
+    app_js = (WEB / "app.js").read_text(encoding="utf-8")
+    css = (WEB / "styles.css").read_text(encoding="utf-8")  # verbatim — page looks identical to local
+    ver = hashlib.md5((app_js + css).encode()).hexdigest()[:8]  # cache-bust on any asset change
+    _write(DOCS / "app.js", app_js)
+    _write(DOCS / "styles.css", css)
+    _write(DOCS / "index.html", build_index((WEB / "index.html").read_text(encoding="utf-8"), ver))
 
     # Pages: disable Jekyll so files (incl. any leading-underscore names) serve as-is.
     (DOCS / ".nojekyll").touch()
