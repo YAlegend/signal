@@ -52,10 +52,47 @@ PYTHONPATH=src python -m signalfund.webapp          # opens http://127.0.0.1:800
 
 # 3) In the cloud — GitHub Actions ▸ "Sourcing run" ▸ Run workflow
 #    Uses the runner's built-in GITHUB_TOKEN + heuristic scorer (no secrets), digest as an artifact.
+
+# 4) The diligence AGENT — a tool-using loop writes a source-cited memo (needs an LLM key; see below)
+PYTHONPATH=src python -m signalfund.memo --agent --company "elizaOS/eliza" \
+    --url https://github.com/elizaOS/eliza --summary "agentic framework for crypto agents"
 ```
 
 Go live (real GitHub data) by adding a free `GITHUB_TOKEN` to `.env` and running
 `python -m signalfund --limit 40`. Open `out/digest.md` — that's the artifact a partner reads.
+
+---
+
+## It's an agent — a bounded, tool-using diligence loop
+
+Beyond the scorer, Signal ships a real **ReAct-style agent** (`src/signalfund/agent.py`): given a
+company, an LLM **decides which source-tools to call**, observes the results, iterates, then the
+gathered evidence feeds the memo. Every memo carries a **Diligence trail** — the tools it chose, in
+order, with reasons and the sources it pulled — so the reasoning is auditable.
+
+```
+## Diligence trail
+1. github_velocity(owner=elizaOS, repo=eliza) — gauge dev activity & contributor spread
+   ↳ sources: https://github.com/elizaOS/eliza
+2. team_lookup(owner=elizaOS, repo=eliza)     — technical-founder proxy, team size, lab pedigree
+3. web_search(query=elizaOS eliza company)    — (unavailable: no EXA key — agent moves on)
+4. messari_funding(name=elizaOS)              — (unavailable: no key — agent moves on)
+5. onchain_metrics()                          — TVL / retention / holder concentration
+   ↳ sources: https://defillama.com/protocol/elizaos-eliza
+```
+
+Design choices that make it a *real* agent, not a prompt:
+- **Portable** — a plain JSON-action protocol (not provider-native tool-calling), so Groq / Gemini /
+  OpenRouter / local Ollama all work. Cheap per-step decisions use `triage()`; the memo uses `synthesize()`.
+- **Tool registry wraps the existing sources** (GitHub, DefiLlama/Blockscout, Farcaster, Messari,
+  Nansen, Exa) — no reimplementation. A tool with no key/data returns `{"unavailable": true}`, so the
+  agent *learns* it can't use it and moves on — never crashes.
+- **Bounded** — capped at `SIGNAL_AGENT_MAX_STEPS` (default 6), identical calls deduped, stops on
+  `finish` or the cap. No runaway cost.
+- **Honest citations** — only sources the agent actually retrieved may be cited; hallucinated links are
+  dropped. With **no LLM key**, it gracefully falls back to the single-shot memo. Offline-tested in CI.
+
+Run it with `--agent` (default when a provider is set) or force the classic single-shot with `--no-agent`.
 
 ---
 
@@ -101,6 +138,9 @@ fixture-tested**; their live field mappings need a paid key to validate (flagged
                           │
                    MODEL ROUTING (llm.py) — provider-agnostic
                    local/hosted triage ──→ frontier synthesis
+                          │
+   DILIGENCE AGENT (agent.py) — bounded ReAct loop: the model PICKS which of the
+   source-tools above to call, observes, iterates → memo + Diligence trail
 ```
 
 The **GitHub star-velocity** logic lives once in `sources/github_velocity.py` and is exposed two ways:
@@ -124,7 +164,7 @@ the same signals diligence it.
   (ponzi/presale) from *soft* notes (early-stage, no recent commits) — soft notes become visible
   **risks**, not a score penalty, so a high-fit early team isn't zeroed out.
 - **"Looks good in a demo, drifts in prod."** `evals/` keeps a labeled set and is **CI-gated**: a
-  scorer change ships only if precision/recall hold. Seven offline checks gate every push.
+  scorer change ships only if precision/recall hold. Eight offline checks gate every push.
 
 ---
 
@@ -156,11 +196,11 @@ an offline path, so the repo runs with no secrets at all.
 ## Layout
 
 ```
-src/signalfund/   orchestrator · scoring · llm · memo · backtest · webapp · store · dedup · digest
+src/signalfund/   orchestrator · scoring · llm · memo · agent · backtest · webapp · store · dedup · digest
   sources/        github_velocity · harmonic · messari · nansen · onchain · social · pre_public ·
                   team · network_radar · watchlist · blockscout
 config/thesis.yaml   the fund thesis the scorer matches against (edit to retune)
-evals/            run_evals.py + 6 acceptance checks (all CI-gated)
+evals/            run_evals.py + 7 acceptance checks (all CI-gated)
 mcp_servers/      custom github-velocity MCP
 .github/workflows/  evals.yml (CI) · sourcing.yml (cloud Run button)
 BACKTEST.md · CLAUDE.md · docs/   playbook, operator guide, research
