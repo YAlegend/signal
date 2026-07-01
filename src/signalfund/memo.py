@@ -174,6 +174,10 @@ def main():
     p.add_argument("--summary", default="", help="one-line description")
     p.add_argument("--tags", default="", help="comma-separated tags")
     p.add_argument("--out", default="out/memos", help="output directory")
+    p.add_argument("--agent", action="store_true",
+                   help="use the tool-using diligence agent (default when an LLM provider is set)")
+    p.add_argument("--no-agent", action="store_true",
+                   help="force the single-shot memo (skip the agent loop)")
     args = p.parse_args()
 
     thesis = _load_thesis()
@@ -186,7 +190,20 @@ def main():
         c = Candidate(name=args.company, source="manual", url=args.url, summary=args.summary,
                       tags=[t.strip() for t in args.tags.split(",") if t.strip()])
 
-    memo = build_memo(c, thesis)
+    # Default to the tool-using agent when a provider is available; --no-agent forces single-shot.
+    use_agent = args.agent or (not args.no_agent and llm.any_available())
+    if use_agent:
+        from . import agent  # lazy: avoids a circular import at module load
+        result = agent.run_diligence(c, thesis)
+        memo = result["memo"]
+        if result.get("agent"):
+            chosen = [s["tool"] for s in result["trail"] if s.get("tool") != "finish"]
+            print(f"[memo] diligence agent ran — tools chosen: {', '.join(chosen) or '(none)'}")
+        else:
+            print("[memo] no LLM provider — single-shot memo (agent skipped)")
+    else:
+        memo = build_memo(c, thesis)
+
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"{_slug(c.name)}.md"

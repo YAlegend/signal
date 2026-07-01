@@ -52,5 +52,8 @@ jobs:
       - name: Nansen onchain-upgrade + smart-money convergence check (offline)
         run: PYTHONPATH=src python evals/nansen_check.py
 
+      - name: Diligence agent (tool-using ReAct loop) check (offline)
+        run: PYTHONPATH=src python evals/agent_check.py
+
       - name: Phase 0 backtest demo (smoke)
         run: PYTHONPATH=src python -m signalfund.backtest --demo
