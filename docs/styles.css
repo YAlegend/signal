@@ -288,3 +288,8 @@ table.grid th { color: var(--muted); font-weight: 600; }
 .bars-head { font-size: 11px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase;
   display: flex; align-items: center; margin: 2px 0 5px; }
 .pill-row { display: flex; align-items: center; gap: 2px; }
+/* Sidebar tooltips must overflow into the main column and paint ON TOP of it — the sidebar
+   otherwise has no stacking context, so .main (a later sibling) covers the overflowing bubble. */
+.sidebar { position: relative; z-index: 30; }
+.nav-item { overflow: visible; }
+.sidebar .info .tip { z-index: 300; }

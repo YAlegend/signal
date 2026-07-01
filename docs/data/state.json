@@ -18,7 +18,7 @@
 "velocity_per_day": 240,
 "language": "Go"
 },
-"discovered_at": "2026-07-01T17:19:40.464429+00:00"
+"discovered_at": "2026-07-01T17:28:15.839310+00:00"
 },
 "score": 69.8,
 "thesis_fit": "Moderate fit (69.8/100). Matches Agent control planes / trust infra, AI x crypto / agentic, Crypto infrastructure \u2014 the agent-native, control-plane positioning the fund backs. Signal: 240 stars/day (+1,680 in 7d). Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
@@ -67,7 +67,7 @@
 "contributor_gini": 0.22,
 "contributors": 14
 },
-"discovered_at": "2026-07-01T17:19:40.464185+00:00"
+"discovered_at": "2026-07-01T17:28:15.839122+00:00"
 },
 "score": 67.9,
 "thesis_fit": "Moderate fit (67.9/100). Matches Agent control planes / trust infra, AI x crypto / agentic \u2014 the agent-native, control-plane positioning the fund backs. Signal: 612 stars/day (+4,300 in 7d). Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
@@ -117,7 +117,7 @@
 "technical_ceo": true,
 "team_size": 3
 },
-"discovered_at": "2026-07-01T17:19:40.464425+00:00"
+"discovered_at": "2026-07-01T17:28:15.839305+00:00"
 },
 "score": 64.1,
 "thesis_fit": "Moderate fit (64.1/100). Matches Agent control planes / trust infra, AI x crypto / agentic \u2014 the agent-native, control-plane positioning the fund backs. Signal: pre-seed, stealth; 3 ex-Stripe/Lightning founders. Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
@@ -170,7 +170,7 @@
 "technical_ceo": true,
 "frontier_lab_alum": true
 },
-"discovered_at": "2026-07-01T17:19:40.464438+00:00"
+"discovered_at": "2026-07-01T17:28:15.839319+00:00"
 },
 "score": 50.8,
 "thesis_fit": "Moderate fit (50.8/100). Matches DeFi & financial infra, Post-quantum security, Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: 95 stars/day (+665 in 7d). Open question: Where does sustainable, non-incentivised demand come from?",
@@ -217,7 +217,7 @@
 "tvl_retention": 0.75,
 "holder_gini": 0.72
 },
-"discovered_at": "2026-07-01T17:19:40.464433+00:00"
+"discovered_at": "2026-07-01T17:28:15.839313+00:00"
 },
 "score": 43.0,
 "thesis_fit": "Watch fit (43.0/100). Matches Agent control planes / trust infra, DeFi & financial infra \u2014 the agent-native, control-plane positioning the fund backs. Signal: seed; 40% MoM revenue growth. Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
@@ -267,7 +267,7 @@
 "neynar_score": 0.72,
 "account_age_days": 410
 },
-"discovered_at": "2026-07-01T17:19:40.464435+00:00"
+"discovered_at": "2026-07-01T17:28:15.839316+00:00"
 },
 "score": 40.2,
 "thesis_fit": "Watch fit (40.2/100). Matches DeFi & financial infra, Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: growing fast on Farcaster; 12k MAU. Open question: Where does sustainable, non-incentivised demand come from?",
@@ -315,7 +315,7 @@
 "hackathon_win": true,
 "post_event_active": false
 },
-"discovered_at": "2026-07-01T17:19:40.464441+00:00"
+"discovered_at": "2026-07-01T17:28:15.839322+00:00"
 },
 "score": 21.4,
 "thesis_fit": "Watch fit (21.4/100). Matches Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: early; trending on CT. Open question: Is there a wedge to distribution, or does it die in a crowded field?",
@@ -355,7 +355,7 @@
 "raw": {
 "stage": "ico"
 },
-"discovered_at": "2026-07-01T17:19:40.464443+00:00"
+"discovered_at": "2026-07-01T17:28:15.839325+00:00"
 },
 "score": 0.0,
 "thesis_fit": "Low fit (0.0/100). Triggers anti-signal: meme coin, anti-signal: presale, anti-signal: airdrop farming, anti-signal: 1000x \u2014 noise, not a backable pre-seed team. Screen out.",
