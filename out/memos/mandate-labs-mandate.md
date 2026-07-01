@@ -1,5 +1,5 @@
 # Investment Memo — mandate-labs/mandate
-*Generated 2026-06-30 · thesis-fit **67.9/100** (Moderate) · source: github*
+*Generated 2026-07-01 · thesis-fit **67.9/100** (Moderate) · source: github*
 
 **One-liner.** Open policy engine that binds AI agents to user-defined permissions: spending limits, allow-lists and intent constraints enforced at settlement. Verifiable, auditable delegation for autonomous agents.
 

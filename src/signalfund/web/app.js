@@ -5,6 +5,13 @@ const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => (
   { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+// Reusable inline info tooltip (hover + keyboard focus; CSS-only bubble, works in the static build).
+// `pos` is optional edge/position modifiers: "ta" (above), "tl" (left-anchored), "tr" (right-anchored).
+function info(tip, pos) {
+  return `<span class="info${pos ? " " + pos : ""}" tabindex="0" role="note" aria-label="${esc(tip)}">`
+    + `ⓘ<span class="tip">${esc(tip)}</span></span>`;
+}
+
 const state = { digest: [], backtest: null, memos: [], thesisParsed: null, thesis: {}, feedback: {},
                 signals: [], enabled: {}, providers: [], scorerProvider: "auto", scorer: "?", mode: "demo" };
 const LS_SIGNALS = "signal.enabledSignals";
@@ -233,7 +240,8 @@ function bars(ss) {
   if (ss.team) extra.push(`team +${ss.team}`);
   if (ss.social) extra.push(`social +${ss.social}`);
   if (ss.pre_public) extra.push(`pre_public +${ss.pre_public}`);
-  return `<div class="bars">${rows.join("")}</div>` +
+  return `<div class="bars-head">breakdown ${info("Score = thesis fit (dominant, ~60%) + quality signals (~40%) + a credibility adjustment. Fit gates; signals corroborate; traction is dampened so one spike can't carry a company.")}</div>`
+    + `<div class="bars">${rows.join("")}</div>` +
     (extra.length ? `<div class="muted" style="font-size:12px;margin:-4px 0 10px">${extra.join(" · ")}</div>` : "");
 }
 
@@ -254,6 +262,7 @@ function card(s, rank, origIdx) {
           <span class="feedback">
             <button class="thumb up${fb === "up" ? " active" : ""}" data-fb="up" title="On-thesis — good surface">👍</button>
             <button class="thumb down${fb === "down" ? " active" : ""}" data-fb="down" title="Off-thesis — bad surface">👎</button>
+            ${info("Label a candidate — feedback is logged to help train the scorer over time.", "tr")}
           </span>
           <span class="score-pill" style="background:${ac}">${esc(s.score)}</span>
         </div>
@@ -304,7 +313,8 @@ function renderDigest() {
     <span class="stat"><b>${strong}</b> strong (≥70)</span>
     <span class="stat"><b>${screened}</b> screened out</span>
     <span class="stat"><b>${rows.length}</b> shown</span>
-    ${rated ? `<span class="stat"><b>${rated}</b> rated 👍/👎</span>` : ""}` : "";
+    ${rated ? `<span class="stat"><b>${rated}</b> rated 👍/👎</span>` : ""}
+    ${info("strong = score ≥ 70. screened out = hit a hard anti-signal like scam or presale. shown = passed the noise filter.")}` : "";
   $("#cards").innerHTML = rows.map(({ s, i }, n) => card(s, n + 1, i)).join("");
 }
 
@@ -369,7 +379,10 @@ async function openMemo(name, markdown) {
     try { const r = await api("/api/memo?name=" + encodeURIComponent(name)); markdown = r.markdown; }
     catch (e) { return toast(e.message, true); }
   }
-  $("#memo-view").innerHTML = `<div class="md">${md(markdown)}</div>`;
+  // Annotate the "Sub-scores:" line with an inline tooltip (post-process the rendered HTML).
+  const subTip = info("What actually fed this score. A sample company like this is GitHub-only, so you see fit + traction. A real company with on-chain, team, social, or funding data would show those too. Any signal with no data just counts 0 — it's never invented.");
+  const html = md(markdown).replace("Sub-scores:", "Sub-scores: " + subTip);
+  $("#memo-view").innerHTML = `<div class="md">${html}</div>`;
 }
 
 /* ---------- thesis (sectioned editor) ---------- */
@@ -407,7 +420,7 @@ function themeCard(th, i) {
       <input class="theme-label" type="text" data-theme="${i}" data-field="label" value="${esc(th.label || "")}" placeholder="label">
       <button class="kw-x" data-del-theme="${i}" title="delete theme">×</button>
     </div>
-    <div class="theme-weight"><span class="muted" style="min-width:54px">weight</span>
+    <div class="theme-weight"><span class="muted" style="min-width:54px">weight${info("How central this theme is to the fund — 1.0 = core thesis, 0.5 = wider strike zone. Higher weight = a bigger boost to a company's fit.")}</span>
       <input type="range" min="0" max="1" step="0.05" data-theme="${i}" data-field="weight" value="${th.weight ?? 0}">
       <b data-weightval="${i}">${th.weight ?? 0}</b></div>
     <div class="small muted">name: <code>${esc(th.name || "—")}</code></div>
@@ -439,17 +452,18 @@ function renderThesis() {
       <button class="ghost" id="add-theme">+ Add theme</button>
     </div></details>
 
-    <details class="tcard"><summary>Anti-signals · ${(t.anti_signals?.keywords || []).length}</summary><div class="tcard-body">
+    <details class="tcard"><summary>Anti-signals · ${(t.anti_signals?.keywords || []).length}${info("Words that down-rank a candidate hard — scam/hype language — regardless of fit.")}</summary><div class="tcard-body">
       <div class="small muted">candidates matching these are down-ranked</div>
       ${chipList(t.anti_signals?.keywords || [], "anti")}
     </div></details>
 
-    <details class="tcard"><summary>Stage preference</summary><div class="tcard-body">
+    <details class="tcard"><summary>Stage preference${info("Prefer early stages; down-rank late/public rounds. An on-thesis company that already raised a Series B gets marked down.")}</summary><div class="tcard-body">
       <div class="small muted">prefer</div>${chipList(sp.prefer || [], "prefer")}
       <div class="small muted" style="margin-top:8px">avoid</div>${chipList(sp.avoid || [], "avoid")}
     </div></details>
 
-    <details class="tcard"><summary>Signal weights</summary><div class="tcard-body">
+    <details class="tcard"><summary>Signal weights${info("The most points each signal can add. Team is highest (founder quality is most predictive); on-chain and social are lower because they're easier to fake.")}</summary><div class="tcard-body">
+      <div class="small muted">composite (fit vs signals)${info("How the final score blends thesis fit vs the quality signals. Fit dominates (~60%) so off-thesis stays low; signals (~40%) separate the strong ones.")}</div>
       <div class="small muted">max points each signal can add on top of fit + traction + credibility</div>
       ${t.signal_weights ? swSliders(t.signal_weights) : `<button class="ghost" id="sw-enable">Enable signal-weight tuning</button>`}
     </div></details>`;
@@ -547,22 +561,22 @@ function renderBacktest() {
   if (!bt) { box.innerHTML = '<div class="empty">No backtest yet — run it above.</div>'; return; }
   const emoji = { GREEN: "🟢", YELLOW: "🟡", RED: "🔴" }[bt.decision] || "•";
   const m = bt.metrics || {};
-  const mc = (val, label) => `<div class="metric-card"><div class="m-val">${val}</div><div class="m-label">${label}</div></div>`;
+  const mc = (val, label, tip) => `<div class="metric-card"><div class="m-val">${val}</div><div class="m-label">${label}${tip ? info(tip) : ""}</div></div>`;
   const companies = (bt.companies || []).map((c) => `<tr>
     <td>${esc(c.company)}</td><td>${esc(c.label)}</td><td>${esc(c.channel || "")}</td>
     <td>${c.any_signal ? "yes" : "—"}</td><td>${c.surfaced ? "✅" : "—"}</td>
     <td>${c.lead_days ? c.lead_days + "d" : "—"}</td><td>${esc(c.best_score ?? "")}</td></tr>`).join("");
   box.innerHTML = `
     <div class="decision"><span class="emoji">${emoji}</span>
-      <div><div class="d-text">${esc(bt.decision)}</div><div class="muted">${esc(bt.reason || "")}</div></div></div>
+      <div><div class="d-text">${esc(bt.decision)}${info("Go/no-go on whether sourcing is reliable. Green = works, Yellow = works in part, Red = doesn't. Uses point-in-time data — no look-ahead.")}</div><div class="muted">${esc(bt.reason || "")}</div></div></div>
     <div class="scorecard">
-      ${mc(m.recall ?? "—", `recall @≥${m.lead_req_days ?? 14}d lead`)}
-      ${mc((m.median_lead_days ?? "—") + "d", "median lead time")}
-      ${mc(m.precision_proxy ?? "—", "precision proxy")}
-      ${mc(m.no_signal_rate ?? "—", "no-signal rate")}
+      ${mc(m.recall ?? "—", `recall @≥${m.lead_req_days ?? 14}d lead`, "Of the real deals, the fraction Signal caught at least 14 days early.")}
+      ${mc((m.median_lead_days ?? "—") + "d", "median lead time", "For the deals it caught, how early on average.")}
+      ${mc(m.precision_proxy ?? "—", "precision proxy", "Of everything it surfaced, the fraction that were actually good deals, not duds.")}
+      ${mc(m.no_signal_rate ?? "—", "no-signal rate", "Fraction of real deals with no public footprint at all — nothing could have caught them.")}
     </div>
     <h2 style="font-size:15px">Per-company</h2>
-    <table class="grid"><thead><tr><th>Company</th><th>Label</th><th>Channel</th><th>Signal</th><th>Surfaced</th><th>Lead</th><th>Best score</th></tr></thead>
+    <table class="grid"><thead><tr><th>Company</th><th>Label${info("a good deal vs a dud")}</th><th>Channel${info("how it reached the fund: public, warm intro, or inbound")}</th><th>Signal${info("did it have any public footprint at the time?", "tr")}</th><th>Surfaced${info("scored ≥ 30 and flagged ≥ 14 days early?", "tr")}</th><th>Lead${info("how many days early", "tr")}</th><th>Best score${info("the top score it earned at the time.", "tr")}</th></tr></thead>
     <tbody>${companies}</tbody></table>`;
 }
 $("#bt-btn").onclick = async () => {

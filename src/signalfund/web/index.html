@@ -17,15 +17,15 @@
         </div>
       </div>
       <nav id="nav">
-        <button class="nav-item active" data-view="run"><span class="ico">▸</span>Run</button>
-        <button class="nav-item" data-view="digest"><span class="ico">▸</span>Digest <span class="badge" id="nav-digest-count"></span></button>
-        <button class="nav-item" data-view="memos"><span class="ico">▸</span>Memos <span class="badge" id="nav-memos-count"></span></button>
-        <button class="nav-item" data-view="thesis"><span class="ico">▸</span>Thesis</button>
-        <button class="nav-item" data-view="backtest"><span class="ico">▸</span>Backtest</button>
-        <button class="nav-item" data-view="guide"><span class="ico">▸</span>Guide</button>
+        <button class="nav-item active" data-view="run"><span class="ico">▸</span>Run<span class="info tl" role="note" aria-label="Start a sourcing run and configure it.">ⓘ<span class="tip">Start a sourcing run and configure it.</span></span></button>
+        <button class="nav-item" data-view="digest"><span class="ico">▸</span>Digest <span class="badge" id="nav-digest-count"></span><span class="info tl" role="note" aria-label="The ranked list of companies from the last run.">ⓘ<span class="tip">The ranked list of companies from the last run.</span></span></button>
+        <button class="nav-item" data-view="memos"><span class="ico">▸</span>Memos <span class="badge" id="nav-memos-count"></span><span class="info tl" role="note" aria-label="Source-cited write-ups generated for companies.">ⓘ<span class="tip">Source-cited write-ups generated for companies.</span></span></button>
+        <button class="nav-item" data-view="thesis"><span class="ico">▸</span>Thesis<span class="info tl" role="note" aria-label="What the fund cares about — the mandate the scorer matches against. Fully editable.">ⓘ<span class="tip">What the fund cares about — the mandate the scorer matches against. Fully editable.</span></span></button>
+        <button class="nav-item" data-view="backtest"><span class="ico">▸</span>Backtest<span class="info tl" role="note" aria-label="The honest go/no-go — would this have caught real deals early?">ⓘ<span class="tip">The honest go/no-go — would this have caught real deals early?</span></span></button>
+        <button class="nav-item" data-view="guide"><span class="ico">▸</span>Guide<span class="info tl" role="note" aria-label="Plain-English explainer of every signal and how the scoring works.">ⓘ<span class="tip">Plain-English explainer of every signal and how the scoring works.</span></span></button>
       </nav>
       <div class="sidebar-foot">
-        <div id="scorer-pill" class="pill">scorer: …</div>
+        <div class="pill-row"><div id="scorer-pill" class="pill">scorer: …</div><span class="info ta tl" tabindex="0" role="note" aria-label="The scoring engine running now. HeuristicScorer = plain rules, no AI. LLMScorer = an AI model writes the rationale (when a key is set).">ⓘ<span class="tip">The scoring engine running now. HeuristicScorer = plain rules, no AI. LLMScorer = an AI model writes the rationale (when a key is set).</span></span></div>
         <div class="muted">scores are a triage aid, not a verdict — a human makes the call.</div>
       </div>
     </aside>
@@ -38,7 +38,7 @@
         <div class="panel">
           <div class="row">
             <label class="seg">
-              <span>Mode</span>
+              <span>Mode <span class="info" tabindex="0" role="note" aria-label="Demo runs on bundled sample data with no keys. Live pulls real GitHub data (add a free GITHUB_TOKEN for higher limits).">ⓘ<span class="tip">Demo runs on bundled sample data with no keys. Live pulls real GitHub data (add a free GITHUB_TOKEN for higher limits).</span></span></span>
               <span class="toggle">
                 <button id="mode-demo" class="toggle-btn active">Demo (offline)</button>
                 <button id="mode-live" class="toggle-btn">Live</button>
@@ -49,7 +49,7 @@
               <input id="limit" type="number" min="1" max="200" value="25">
             </label>
             <label class="field" id="scorer-wrap">
-              <span>Scorer model</span>
+              <span>Scorer model <span class="info" tabindex="0" role="note" aria-label="Which model writes the rationales. Auto uses the best key you have; Heuristic uses plain rules and needs no AI at all.">ⓘ<span class="tip">Which model writes the rationales. Auto uses the best key you have; Heuristic uses plain rules and needs no AI at all.</span></span></span>
               <select id="scorer-select"></select>
             </label>
             <button id="run-btn" class="primary">Run sourcing ▶</button>
@@ -59,7 +59,7 @@
 
         <div class="panel" id="signals-panel">
           <div class="panel-head">
-            <h3>Signals</h3>
+            <h3>Signals <span class="info" tabindex="0" role="note" aria-label="What the score is built from. Free signals are on by default; premium need a paid key. A signal with no key or data just contributes 0 — nothing breaks.">ⓘ<span class="tip">What the score is built from. Free signals are on by default; premium need a paid key. A signal with no key or data just contributes 0 — nothing breaks.</span></span></h3>
             <span class="muted">toggle which signals feed the composite. Free are on by default; premium are opt-in. A disabled (or keyless) signal simply contributes 0 — nothing breaks.</span>
           </div>
           <div id="signal-rows"></div>
@@ -91,7 +91,7 @@
 
       <!-- MEMOS -->
       <section class="view" id="view-memos">
-        <h1>Investment memos</h1>
+        <h1>Investment memos <span class="info" tabindex="0" role="note" aria-label="A first-draft memo built from the scorer + thesis. Every claim links to a source; unbacked claims are dropped. With an Anthropic key, a frontier model writes it in the fund's voice.">ⓘ<span class="tip">A first-draft memo built from the scorer + thesis. Every claim links to a source; unbacked claims are dropped. With an Anthropic key, a frontier model writes it in the fund's voice.</span></span></h1>
         <p class="lead">Source-cited memos. Offline they're built from the scorer + thesis; with <code>ANTHROPIC_API_KEY</code> set, a frontier model writes them in the fund's voice.</p>
         <div class="memos-layout">
           <div class="memo-list" id="memo-list"></div>
