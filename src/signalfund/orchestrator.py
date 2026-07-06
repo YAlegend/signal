@@ -85,6 +85,12 @@ def run(demo: bool = False, limit: int = 25, out_dir: str = None,
     else:
         candidates = []
         for s in build_sources():
+            # Toggleable sourcing sources (currently just network_radar): respect the
+            # UI's enabled_signals list, same contract as the enrich passes below.
+            if enabled_signals is not None and s.name == "network_radar" \
+                    and "network_radar" not in enabled_signals:
+                print("[signal] network_radar disabled — skipping source")
+                continue
             try:
                 got = s.fetch(limit=limit, store=store)
                 print(f"[signal] {s.name}: {len(got)} candidates")

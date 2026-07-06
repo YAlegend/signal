@@ -80,6 +80,11 @@ SIGNALS = [
     {"name": "nansen",        "tier": "premium", "env": "NANSEN_API_KEY",
      "label": "onchain · Nansen (smart-money)", "group": "onchain"},
     {"name": "social",        "tier": "free",    "env": "NEYNAR_API_KEY"},
+    # Sourcing source (not an enrich pass): watches curated smart accounts' Farcaster
+    # follow lists and surfaces new convergence as candidates. Toggle gates the source
+    # in orchestrator.run; keyless = skips itself (graceful absence).
+    {"name": "network_radar", "tier": "free",    "env": "NEYNAR_API_KEY",
+     "label": "network radar · Farcaster follows"},
     {"name": "pre_public",    "tier": "free",    "env": "EVERTRACE_API_KEY"},
     # `team` is dual-tier — the two paths toggle independently:
     {"name": "team_github",   "tier": "free",    "env": "GITHUB_TOKEN",
