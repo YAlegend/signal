@@ -19,3 +19,4 @@ data/backtest/ground_truth.portfolio.json
 data/backtest/ground_truth.portfolio.filled.json
 
 # Keep out/ sample digests in the repo as examples; ignore everything else generated.
+board.html

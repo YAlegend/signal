@@ -1,0 +1,282 @@
+{
+  "project": "Signal",
+  "description": "Thesis-driven dealflow sourcing & diligence agent (early-stage crypto / AI). Scrumban backlog. This file is the single source of truth for project status; the terminal CLI and the HTML board both read it.",
+  "updated": "2026-08-09",
+  "meta": {
+    "statuses": ["backlog", "ready", "inprogress", "review", "done"],
+    "wip": { "inprogress": 2, "review": 3 },
+    "mosOrder": ["Must", "Should", "Could"],
+    "epics": {
+      "E1": { "name": "Trustworthy live sourcing", "color": "#2563eb" },
+      "E2": { "name": "Wider net (network radar)", "color": "#0d9488" },
+      "E3": { "name": "Signal quality & backtest", "color": "#7c3aed" },
+      "E4": { "name": "Diligence-agent reliability", "color": "#b45309" },
+      "E5": { "name": "Passive operation & delivery", "color": "#be123c" },
+      "E6": { "name": "Presentation polish", "color": "#475569" }
+    }
+  },
+  "items": [
+    {
+      "id": "S-01", "title": "Source-health panel: show every source live vs. skipped",
+      "epic": "E1", "points": 3, "mos": "Must", "sprint": "Sprint 1", "status": "ready", "blockedBy": [],
+      "criteria": [
+        "Each run lists every configured source with state live / skipped / failed + reason.",
+        "A missing API key shows 'skipped (no key)' — never an error or stack trace.",
+        "Panel is visible in the UI and summarised in the Actions digest artifact."
+      ],
+      "subtasks": [
+        { "text": "Build a source registry: source name -> required env var / key.", "done": false },
+        { "text": "Add a per-source probe returning live / skipped / failed + reason.", "done": false },
+        { "text": "Render a source-health panel on the Run / Digest page.", "done": false },
+        { "text": "Add a source-health summary line to the digest artifact.", "done": false },
+        { "text": "Unit test: missing key -> 'skipped', never raises.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-02", "title": "Farcaster radar live via a Neynar API key",
+      "epic": "E1", "points": 5, "mos": "Must", "sprint": "Sprint 1", "status": "ready", "blockedBy": [],
+      "criteria": [
+        "With NEYNAR_API_KEY set, each run fetches follows for accounts in smart_accounts.yaml.",
+        "Projects newly followed by >=2 trusted accounts are injected as scored candidates.",
+        "Without the key, the radar skips gracefully (no error)."
+      ],
+      "subtasks": [
+        { "text": "Add a Neynar client + register NEYNAR_API_KEY in the source registry.", "done": false },
+        { "text": "Fetch the following list per trusted account; cache last snapshot to disk.", "done": false },
+        { "text": "Diff current vs previous; find projects followed by >=2 accounts.", "done": false },
+        { "text": "Map discovered accounts -> company candidates; feed into the scorer.", "done": false },
+        { "text": "Handle pagination + rate limits; persist snapshot for next diff.", "done": false },
+        { "text": "Test: no key -> skip; mocked key -> candidate injected.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SPK-1", "title": "Spike: confirm X/Twitter API access & rate limits for follow-graph diffing",
+      "epic": "E2", "points": 2, "mos": "Must", "sprint": "Sprint 1", "status": "ready", "blockedBy": [],
+      "criteria": [
+        "Timeboxed research story — no production code required.",
+        "Produces a written go / no-go with the tier, rate limits, cost, and a recommended approach.",
+        "Updates the estimate for S-09 based on findings."
+      ],
+      "subtasks": [
+        { "text": "Identify X API endpoints for 'following' lists + access tier required.", "done": false },
+        { "text": "Check rate limits, monthly caps, and cost at our trusted-account volume.", "done": false },
+        { "text": "Throwaway prototype: pull one account's following list.", "done": false },
+        { "text": "Write go/no-go note + recommended design; re-estimate S-09.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-03", "title": "Agent memo streams progress and times out gracefully",
+      "epic": "E4", "points": 5, "mos": "Must", "sprint": "Sprint 1", "status": "ready", "blockedBy": [],
+      "criteria": [
+        "Memo generation streams step-by-step progress to the UI.",
+        "Per-step and overall timeouts; on timeout it returns a partial memo + clear status.",
+        "Never hangs the request; the no-fabrication guardrail holds on partial results."
+      ],
+      "subtasks": [
+        { "text": "Wrap each agent step with a timeout; add an overall deadline.", "done": false },
+        { "text": "Stream step events to the UI (SSE / websocket / polling).", "done": false },
+        { "text": "On timeout or error, return the partial diligence trail + 'incomplete' status.", "done": false },
+        { "text": "Preserve 'not found' refusal behaviour on partial runs.", "done": false },
+        { "text": "Test: simulated slow step returns within the deadline.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-04", "title": "Report precision, recall & lead-time on the backtest page",
+      "epic": "E3", "points": 5, "mos": "Must", "sprint": "Sprint 1", "status": "ready", "blockedBy": [],
+      "criteria": [
+        "Backtest page shows precision, recall, and median lead-time (days).",
+        "The counts behind each number are visible.",
+        "The verdict banner (yellow/green) reflects the metrics honestly."
+      ],
+      "subtasks": [
+        { "text": "Define the ground-truth schema (deal, date-known, has-public-data flag).", "done": false },
+        { "text": "Compute precision / recall from surfaced vs known.", "done": false },
+        { "text": "Compute lead-time = date-widely-known - date-surfaced.", "done": false },
+        { "text": "Render metrics + counts; keep the honest verdict logic.", "done": false },
+        { "text": "Validate against the current 3-deal set.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-05", "title": "Expand the backtest ground-truth set to >=15 deals",
+      "epic": "E3", "points": 8, "mos": "Must", "sprint": "Sprint 2", "status": "backlog", "blockedBy": [],
+      "criteria": [
+        ">=15 past deals with first-public-signal date and widely-known date.",
+        "Each flagged for whether it had public data (vs warm-intro only).",
+        "Documented provenance; backtest runs on the full set."
+      ],
+      "subtasks": [
+        { "text": "Source 15+ past early-stage crypto/AI deals with known outcomes.", "done": false },
+        { "text": "Record first-public-signal + widely-known dates per deal.", "done": false },
+        { "text": "Flag public-data vs warm-intro-only deals.", "done": false },
+        { "text": "Store as a versioned dataset with provenance notes.", "done": false },
+        { "text": "Re-run backtest; snapshot the baseline metrics.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-06", "title": "Calibrate scoring weights against backtest outcomes",
+      "epic": "E3", "points": 5, "mos": "Should", "sprint": "Sprint 2", "status": "backlog", "blockedBy": ["S-05"],
+      "criteria": [
+        "Weights tuned on a train split and validated on a held-out split.",
+        "No tuning to the whole set (guards against overfitting).",
+        "Before/after metrics recorded for both splits."
+      ],
+      "subtasks": [
+        { "text": "Split ground truth into train / hold-out.", "done": false },
+        { "text": "Search theme + source weights on the train split.", "done": false },
+        { "text": "Validate on hold-out; report both to expose overfit.", "done": false },
+        { "text": "Persist chosen weights in the thesis config with rationale.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-07", "title": "Persist the diligence trail so memos are re-openable",
+      "epic": "E4", "points": 3, "mos": "Should", "sprint": "Sprint 2", "status": "backlog", "blockedBy": [],
+      "criteria": [
+        "Every memo + full trail is saved with timestamps.",
+        "Re-openable from a Memos view by company / run.",
+        "Survives a server restart."
+      ],
+      "subtasks": [
+        { "text": "Choose storage (json / sqlite) for memo + trail + timestamps.", "done": false },
+        { "text": "Save on memo completion, including partial runs.", "done": false },
+        { "text": "Add a Memos list + detail view; link from the digest card.", "done": false },
+        { "text": "Test: restart server -> memo still retrievable.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-08", "title": "Wire Nansen on-chain data into scoring",
+      "epic": "E1", "points": 8, "mos": "Should", "sprint": "R2 (Next)", "status": "backlog", "blockedBy": [],
+      "criteria": [
+        "With NANSEN_API_KEY, smart-money flow signals feed the scorer.",
+        "Absent the key, it is skipped via source-health.",
+        "The signal's contribution shows in the card score breakdown."
+      ],
+      "subtasks": [
+        { "text": "Add a Nansen client + register the key.", "done": false },
+        { "text": "Map endpoints -> signals (smart-money inflow, holder growth).", "done": false },
+        { "text": "Feed signals into scoring; expose contribution in the breakdown.", "done": false },
+        { "text": "Add caching + rate-limit; graceful skip.", "done": false },
+        { "text": "Test with mocked responses.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-09", "title": "Twitter/X network radar mirroring Farcaster",
+      "epic": "E2", "points": 13, "mos": "Should", "sprint": "R2 (Next)", "status": "backlog", "blockedBy": ["SPK-1"],
+      "criteria": [
+        "Implements the approach recommended by SPK-1 (blocked until the spike is done).",
+        ">=2 trusted-account new-follow rule injects candidates.",
+        "Merges/de-dups with Farcaster candidates; skips gracefully without access."
+      ],
+      "subtasks": [
+        { "text": "Implement the X following-graph client per the spike.", "done": false },
+        { "text": "Snapshot + diff following lists across runs.", "done": false },
+        { "text": ">=2-account new-follow -> candidate injection.", "done": false },
+        { "text": "Merge / de-dup with Farcaster candidates.", "done": false },
+        { "text": "Rate-limit + backoff; graceful skip; tests.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-10", "title": "Cost / latency cap on memo generation",
+      "epic": "E4", "points": 3, "mos": "Should", "sprint": "Sprint 2", "status": "backlog", "blockedBy": [],
+      "criteria": [
+        "A per-memo token / step budget is enforced.",
+        "When exceeded, it stops and returns a partial memo with the reason.",
+        "The cap is configurable."
+      ],
+      "subtasks": [
+        { "text": "Add a token / step counter + configurable budget.", "done": false },
+        { "text": "Enforce the cap; return partial + reason.", "done": false },
+        { "text": "Surface cost / latency in the trail footer.", "done": false },
+        { "text": "Test cap enforcement.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-11", "title": "Scheduled daily runs with a delivered digest",
+      "epic": "E5", "points": 8, "mos": "Should", "sprint": "R3 (Later)", "status": "backlog", "blockedBy": [],
+      "criteria": [
+        "A daily scheduled run produces a digest delivered to email or Slack.",
+        "Delivery failures raise an alert.",
+        "The schedule is configurable."
+      ],
+      "subtasks": [
+        { "text": "Add a scheduler (cron / Actions schedule).", "done": false },
+        { "text": "Render the digest to an email / Slack payload.", "done": false },
+        { "text": "Add the delivery integration + secret handling.", "done": false },
+        { "text": "Add failure alerting.", "done": false },
+        { "text": "Test a dry-run delivery.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-12", "title": "Persist run history for comparison over time",
+      "epic": "E5", "points": 5, "mos": "Could", "sprint": "R3 (Later)", "status": "backlog", "blockedBy": [],
+      "criteria": [
+        "Each run's digest is stored with a timestamp.",
+        "A history view lists past runs and opens any digest.",
+        "A retention policy keeps storage bounded."
+      ],
+      "subtasks": [
+        { "text": "Persist each digest with run metadata.", "done": false },
+        { "text": "Add a history list + open-past-digest view.", "done": false },
+        { "text": "Add a retention / cleanup policy.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-13", "title": "Highlight new candidates and score changes since last run",
+      "epic": "E5", "points": 3, "mos": "Could", "sprint": "R3 (Later)", "status": "backlog", "blockedBy": [],
+      "criteria": [
+        "The digest marks candidates new since the last run.",
+        "Score changes vs last run are shown.",
+        "A 'what changed' filter is available."
+      ],
+      "subtasks": [
+        { "text": "Compare current vs previous run's companies.", "done": false },
+        { "text": "Tag new / score-changed items.", "done": false },
+        { "text": "Add UI badges + a 'what changed' filter.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-14", "title": "Bring Harmonic + Messari sources live",
+      "epic": "E1", "points": 8, "mos": "Could", "sprint": "R3 (Later)", "status": "backlog", "blockedBy": [],
+      "criteria": [
+        "With keys, both sources contribute signals to scoring.",
+        "Both skip gracefully when keys are absent.",
+        "Their contribution is documented and shown in the breakdown."
+      ],
+      "subtasks": [
+        { "text": "Add a Harmonic client + signals.", "done": false },
+        { "text": "Add a Messari client + signals.", "done": false },
+        { "text": "Feed both into the scorer; show in the breakdown.", "done": false },
+        { "text": "Graceful skip + tests for each.", "done": false }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "S-15", "title": "Hosted demo never errors on missing keys",
+      "epic": "E6", "points": 2, "mos": "Must", "sprint": "Sprint 1", "status": "review", "blockedBy": [],
+      "criteria": [
+        "The public demo runs end-to-end with zero paid keys.",
+        "No stack traces are surfaced to the visitor.",
+        "Cold-start latency is acceptable and expected."
+      ],
+      "subtasks": [
+        { "text": "Verify the demo path with all paid keys unset.", "done": true },
+        { "text": "Catch + cleanly surface source skips in the UI.", "done": true },
+        { "text": "Smoke-test on Render + GitHub Actions.", "done": false }
+      ],
+      "notes": "Largely shipped already (demo/heuristic mode). Move to done once the Render + Actions smoke test is confirmed."
+    }
+  ]
+}

@@ -232,3 +232,78 @@ tune any sub-score cap from `config/thesis.yaml` (`signal_weights:`) without tou
   separate instead of all pinning at 100; tune the split in `config/thesis.yaml` → `composite_weights`.)
 - `evals/run_evals.py` prints `precision=1.00 recall=0.92 … PASS` (surface threshold 20 on the blended scale).
 - `backtest --demo` prints `decision: YELLOW …` and writes `out/backtest_report.md`.
+
+
+---
+
+# Signal — project guide for Claude Code
+
+Read this at the start of every session. It tells you what the product is, the rules
+that must never break, and how we track work.
+
+## What Signal is
+
+Signal is a **thesis-driven dealflow sourcing & diligence agent** for early-stage crypto / AI
+companies. It searches public data, scores every company it finds against a written investment
+thesis, ranks them into a digest, and writes an AI diligence memo with a full audit trail. It also
+watches a trusted follow-graph (Farcaster) and can be backtested against past deals.
+
+## Non-negotiable guardrails (Definition of Done depends on these)
+
+- **Never fabricate.** If a fact can't be verified from a source, the agent says "not found" — it
+  does not invent a repo, metric, or company. Any change touching the diligence agent must keep this,
+  and needs a test proving the refusal behaviour.
+- **Graceful degradation.** A missing API key must never raise. The source is marked "skipped", the
+  run continues. Every new data source needs a "no key → skipped, no error" test.
+- **Thesis is configuration, not code.** Themes, weights, diligence questions, and stage preferences
+  live in the thesis config / `config/`. Don't hard-code them.
+- **Keep the demo/heuristic path and the live path in parity** so the public demo never breaks.
+
+## Repo orientation (verify against the actual tree; update this file if it drifts)
+
+- Python package: `signalfund` (kept under `src/`).
+- Run the web app locally: `PYTHONPATH=src python -m signalfund.webapp` → http://127.0.0.1:8000
+- Trusted accounts for the network radar: `config/smart_accounts.yaml`
+- Cloud "run button": GitHub Actions → `.github/workflows/sourcing.yml`, produces the `signal-digest` artifact.
+- Secrets live in `.env` (gitignored): `GITHUB_TOKEN`, `GROQ` (LLM). Optional, turn sources live when present:
+  `NEYNAR_API_KEY` (Farcaster), `NANSEN_API_KEY`, `HARMONIC_API_KEY`, `MESSARI_API_KEY`.
+- Run the tests the way this repo already does (pytest). If you add a source, add its graceful-degradation test.
+
+## How we track work — backlog.json is the source of truth
+
+Project status lives in **`backlog.json`** and is edited through the CLI **`signal-board.mjs`**
+(zero dependencies, Node ≥ 18). Do not hand-edit `backlog.json` unless the CLI can't express the change.
+Commit `backlog.json` with your code so status is versioned.
+
+Board columns (Scrumban): `backlog → ready → inprogress → review → done`.
+WIP limit: **2** in `inprogress`. Respect it — finish before starting.
+
+CLI you will use:
+
+```
+node signal-board.mjs stats                 # summary + column counts + blocked items
+node signal-board.mjs list --status ready   # filter: --status --sprint --epic --blocked
+node signal-board.mjs next                   # the recommended next item
+node signal-board.mjs show S-02              # criteria + numbered action items
+node signal-board.mjs move S-02 inprogress   # change status
+node signal-board.mjs check S-02 3 done      # tick action item 3 (or: todo, or omit to toggle)
+node signal-board.mjs note S-02 "…"          # set a note (blocker, decision, link)
+node signal-board.mjs render                 # regenerate board.html from the file
+```
+
+## The working loop (follow this unless I say otherwise)
+
+1. `node signal-board.mjs next` (or I'll name an item). If it's **blocked**, stop and tell me.
+2. `node signal-board.mjs move <id> inprogress`.
+3. Implement the action items **in order**. After each one: `node signal-board.mjs check <id> <n> done`.
+4. Satisfy the item's acceptance criteria and the guardrails above. Add/adjust tests (including the
+   missing-key and no-fabrication cases) and run the suite.
+5. When every action item is checked and tests pass: `node signal-board.mjs move <id> review`,
+   then `node signal-board.mjs render`.
+6. Summarize what changed and what I should verify. **Leave it in `review` — I move it to `done`.**
+7. If blocked at any point: `node signal-board.mjs note <id> "why"` and tell me.
+
+## Style
+
+Small, focused commits. Prefer a thin live-capable slice over a broad demo-only feature. Match the
+existing code's patterns; don't refactor unrelated code while implementing an item.
