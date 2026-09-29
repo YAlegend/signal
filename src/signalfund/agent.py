@@ -21,12 +21,24 @@ cited by the frontier memo path.
 """
 from __future__ import annotations
 
+import concurrent.futures
 import json
 import os
+import time
 
 from . import env, llm, memo
 from .models import Candidate
 from .sources import github_velocity, messari, nansen, onchain, social_farcaster, team
+
+# Bounds a step's wall-clock time (decide() call OR a single tool call) and the whole loop.
+# Env-configurable so a slow provider/tool doesn't hang a memo request indefinitely.
+_STEP_TIMEOUT_S = "SIGNAL_AGENT_STEP_TIMEOUT_S"
+_TOTAL_TIMEOUT_S = "SIGNAL_AGENT_TOTAL_TIMEOUT_S"
+
+# Shared pool: a timed-out call's thread is abandoned (Python can't hard-kill a thread), so a
+# single long-lived pool with headroom avoids leaking one executor per call while still bounding
+# how long WE wait for any one step.
+_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=8, thread_name_prefix="signal-agent")
 
 # ---- tool registry (wraps existing sources; never reimplements fetch logic) -------------------
 
@@ -252,8 +264,39 @@ def _max_steps() -> int:
         return 6
 
 
-def _prepend_trail(memo_md: str, trail: list) -> str:
-    """Insert the visible Diligence trail (tools chosen, in order, with reasons + sources)."""
+def _step_timeout() -> float:
+    try:
+        return max(1.0, float(os.getenv(_STEP_TIMEOUT_S, "20")))
+    except (TypeError, ValueError):
+        return 20.0
+
+
+def _total_timeout() -> float:
+    try:
+        return max(1.0, float(os.getenv(_TOTAL_TIMEOUT_S, "90")))
+    except (TypeError, ValueError):
+        return 90.0
+
+
+def _call_with_timeout(fn, timeout, *args, **kwargs):
+    """Run fn(*args, **kwargs) bounded by `timeout` seconds. Returns (result, timed_out, error).
+    A timeout never raises — the underlying thread is left to finish in the background (its
+    result is discarded); this bounds how long the CALLER waits, which is what a step deadline
+    needs. An exception raised by fn is caught and returned rather than propagated, matching the
+    existing 'a tool failure is an observation, not a crash' contract."""
+    future = _EXECUTOR.submit(fn, *args, **kwargs)
+    try:
+        return future.result(timeout=timeout), False, None
+    except concurrent.futures.TimeoutError:
+        return None, True, None
+    except Exception as e:  # noqa: BLE001 — surfaced to the caller as an observation
+        return None, False, e
+
+
+def _prepend_trail(memo_md: str, trail: list, budget: dict = None) -> str:
+    """Insert the visible Diligence trail (tools chosen, in order, with reasons + sources),
+    plus a budget footer (steps used vs. cap, elapsed time vs. the overall deadline) so a
+    reader can see at a glance whether the run finished cleanly or was cut short by a cap."""
     lines = ["## Diligence trail",
              "*The agent chose these source-tools in order — visible proof of the tool-using loop.*",
              ""]
@@ -268,6 +311,13 @@ def _prepend_trail(memo_md: str, trail: list) -> str:
         srcs = [s for s in (step.get("sources") or []) if s]
         src_s = ("  \n  ↳ sources: " + ", ".join(srcs)) if srcs else ""
         lines.append(f"{n}. **{step['tool']}**({arg_s}) — {step.get('reason', '')}{src_s}")
+    if budget:
+        lines.append("")
+        lines.append(
+            f"_Budget: {budget['steps_used']}/{budget['steps_max']} steps · "
+            f"{budget['elapsed_s']:.1f}s elapsed (cap {budget['total_timeout_s']:.0f}s) · "
+            f"status: {budget['status']}_"
+        )
     trail_md = "\n".join(lines)
     if memo_md.startswith("# "):
         head, _, rest = memo_md.partition("\n")
@@ -275,36 +325,71 @@ def _prepend_trail(memo_md: str, trail: list) -> str:
     return f"{trail_md}\n\n{memo_md}"
 
 
-def run_diligence(candidate: Candidate, thesis: dict, *, tools=None, decide=None,
-                  max_steps: int = None) -> dict:
-    """Run the bounded tool-using loop, then synthesise the memo.
+def run_diligence_events(candidate: Candidate, thesis: dict, *, tools=None, decide=None,
+                         max_steps: int = None, step_timeout: float = None,
+                         total_timeout: float = None):
+    """Generator form of the loop — the single source of truth `run_diligence` (blocking) and
+    the web UI's streaming job (live progress) both drive. Yields one dict per step as it
+    happens — `{"event": "step", "tool", "reason", "args", "sources", "timed_out"}` or
+    `{"event": "finish", "reason"}` — then a final `{"event": "done", "agent", "trail",
+    "sources", "memo", "status", "budget"}` where status is 'complete' or 'incomplete' (cut
+    short by a per-step or the overall deadline) and budget reports steps used vs.
+    SIGNAL_AGENT_MAX_STEPS and elapsed time vs. SIGNAL_AGENT_TOTAL_TIMEOUT_S — the same
+    numbers `_prepend_trail` renders into the memo's trail footer.
 
-    Returns {agent, trail, sources, memo}. Injectable `tools` / `decide` make it offline-testable.
-    Graceful: with no LLM provider configured (and no explicit decider), skip the loop and run the
-    existing single-shot memo.build_memo — unchanged behaviour.
+    Bounded on two axes: each step (a decide() call OR a single tool call) is wrapped in
+    `_call_with_timeout` (default 20s, `SIGNAL_AGENT_STEP_TIMEOUT_S`), and the whole loop has
+    an overall deadline (default 90s, `SIGNAL_AGENT_TOTAL_TIMEOUT_S`) checked before every step.
+    Either kind of timeout stops the loop early (or, for a tool timeout, just records the
+    observation and continues) — never hangs the caller — and still synthesises a memo from
+    whatever evidence was gathered so far: no-fabrication holds unconditionally because
+    memo.build_memo only ever cites `candidate.raw['source_urls']`, which just has fewer
+    entries on a partial run.
     """
     if decide is None:
         env.load_env()  # so the provider gate below sees keys from .env (build_memo also loads it)
     if decide is None and not llm.any_available():
-        return {"agent": False, "trail": [], "sources": [],
-                "memo": memo.build_memo(candidate, thesis)}
+        yield {"event": "done", "agent": False, "trail": [], "sources": [],
+              "memo": memo.build_memo(candidate, thesis), "status": "complete"}
+        return
 
     tools = default_tools() if tools is None else tools
     decide = _make_decider() if decide is None else decide
     steps = _max_steps() if max_steps is None else max_steps
+    step_timeout = _step_timeout() if step_timeout is None else step_timeout
+    total_timeout = _total_timeout() if total_timeout is None else total_timeout
+    start = time.monotonic()
+    deadline = start + total_timeout
 
     goal = candidate.name
     transcript, trail, sources, seen = [], [], [], set()
+    status = "complete"
 
     for _ in range(steps):
-        try:
-            action = decide(goal, thesis, transcript)
-        except Exception as e:  # noqa: BLE001 — a broken decision must not crash the run
-            trail.append({"tool": "finish", "reason": f"decider error: {type(e).__name__}"})
+        if time.monotonic() >= deadline:
+            entry = {"tool": "finish", "reason": f"overall deadline exceeded (>{total_timeout:.0f}s)"}
+            trail.append(entry)
+            status = "incomplete"
+            yield {"event": "finish", **entry}
+            break
+
+        action, timed_out, err = _call_with_timeout(decide, step_timeout, goal, thesis, transcript)
+        if timed_out:
+            entry = {"tool": "finish", "reason": f"decision step timed out (>{step_timeout:.0f}s)"}
+            trail.append(entry)
+            status = "incomplete"
+            yield {"event": "finish", **entry}
+            break
+        if err is not None:  # noqa: BLE001 — a broken decision must not crash the run
+            entry = {"tool": "finish", "reason": f"decider error: {type(err).__name__}"}
+            trail.append(entry)
+            yield {"event": "finish", **entry}
             break
         if not isinstance(action, dict) or action.get("action") == "finish":
             reason = action.get("reason", "done") if isinstance(action, dict) else "done"
-            trail.append({"tool": "finish", "reason": reason})
+            entry = {"tool": "finish", "reason": reason}
+            trail.append(entry)
+            yield {"event": "finish", **entry}
             break
 
         name = action.get("tool")
@@ -317,20 +402,26 @@ def run_diligence(candidate: Candidate, thesis: dict, *, tools=None, decide=None
 
         fn = (tools or {}).get(name)
         if fn is None:
-            obs = {"error": f"unknown tool: {name}"}
+            obs, tool_timed_out = {"error": f"unknown tool: {name}"}, False
         else:
-            try:
-                obs = fn(args, candidate)
-            except Exception as e:  # noqa: BLE001 — a tool failure is an observation, not a crash
-                obs = {"error": f"{type(e).__name__}: {e}"}
+            obs, tool_timed_out, tool_err = _call_with_timeout(fn, step_timeout, args, candidate)
+            if tool_timed_out:
+                obs = {"error": "timeout", "note": f"tool exceeded {step_timeout:.0f}s — treated as unavailable"}
+            elif tool_err is not None:  # noqa: BLE001 — a tool failure is an observation, not a crash
+                obs = {"error": f"{type(tool_err).__name__}: {tool_err}"}
         if not isinstance(obs, dict):
             obs = {"result": obs}
+        if tool_timed_out:
+            status = "incomplete"
 
         step_srcs = [u for u in (obs.get("sources") or []) if u]
         for u in step_srcs:
             if u not in sources:
                 sources.append(u)
-        trail.append({"tool": name, "reason": action.get("reason", ""), "args": args, "sources": step_srcs})
+        entry = {"tool": name, "reason": action.get("reason", ""), "args": args,
+                "sources": step_srcs, "timed_out": tool_timed_out}
+        trail.append(entry)
+        yield {"event": "step", **entry}
         transcript.append({"tool": name, "args": args, "observation": obs})
 
     # Feed the retrieved sources to the candidate so the memo may cite ONLY these (verification
@@ -347,5 +438,28 @@ def run_diligence(candidate: Candidate, thesis: dict, *, tools=None, decide=None
     if picked:
         os.environ["SIGNAL_LLM_PROVIDER"] = picked
 
+    budget = {
+        "steps_used": sum(1 for e in trail if e.get("tool") != "finish"),
+        "steps_max": steps,
+        "elapsed_s": time.monotonic() - start,
+        "step_timeout_s": step_timeout,
+        "total_timeout_s": total_timeout,
+        "status": status,
+    }
     body = memo.build_memo(candidate, thesis)
-    return {"agent": True, "trail": trail, "sources": sources, "memo": _prepend_trail(body, trail)}
+    yield {"event": "done", "agent": True, "trail": trail, "sources": sources,
+          "memo": _prepend_trail(body, trail, budget), "status": status, "budget": budget}
+
+
+def run_diligence(candidate: Candidate, thesis: dict, *, tools=None, decide=None,
+                  max_steps: int = None, step_timeout: float = None,
+                  total_timeout: float = None) -> dict:
+    """Blocking wrapper: drains run_diligence_events() and returns its final 'done' payload
+    (minus the 'event' key) — {agent, trail, sources, memo, status}. Callers that want live
+    progress (the web UI) should iterate run_diligence_events() directly instead."""
+    last = None
+    for ev in run_diligence_events(candidate, thesis, tools=tools, decide=decide,
+                                   max_steps=max_steps, step_timeout=step_timeout,
+                                   total_timeout=total_timeout):
+        last = ev
+    return {k: v for k, v in last.items() if k != "event"}

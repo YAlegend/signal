@@ -15,8 +15,10 @@ on:
       scorer:
         description: "Scorer provider (heuristic / groq / auto)"
         default: "heuristic"
-  # schedule:                 # the agent runs itself, daily at 06:00 UTC
-  #   - cron: "0 6 * * *"
+  schedule:
+    # Daily, unattended, heuristic scorer (zero secrets required to run — Slack delivery below
+    # is separately optional). Change the cron to retime it; https://crontab.guru helps.
+    - cron: "0 13 * * *"
 
 permissions:
   contents: read
@@ -57,3 +59,14 @@ jobs:
             out/digest.md
             out/digest.json
             out/dashboard.html
+            out/source_health.json
+
+      - name: Deliver digest to Slack
+        # Optional: add a SLACK_WEBHOOK_URL repo secret (Slack -> your channel -> Incoming
+        # Webhooks) to get the top candidates posted automatically. No secret -> this step
+        # just logs the message and exits 0 (same "missing key -> skip" rule every other
+        # source follows). A webhook that fails to deliver DOES fail this step, which fails
+        # the job — that's the alert; GitHub already notifies you on a failed scheduled run.
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: PYTHONPATH=src python scripts/notify_slack.py

@@ -7,6 +7,12 @@ and asserts the loop:
   (c) dedupes an identical repeated tool call (executes it once),
   (d) produces a memo containing the Diligence trail and ONLY verified citations,
   (e) falls back to the single-shot memo with no provider — no crash.
+  (f) a slow TOOL step returns within the per-step deadline (doesn't block on it) and the run
+      continues, with the timeout recorded as an observation, not a crash.
+  (g) a slow DECIDE step returns within the per-step deadline, ending the loop early
+      ('incomplete' status) rather than hanging.
+  (h) a short overall deadline cuts the loop off before the first step.
+  (i) no-fabrication holds on a partial/timed-out run: the memo cites only gathered sources.
 
     PYTHONPATH=src python evals/agent_check.py
 """
@@ -15,6 +21,7 @@ from __future__ import annotations
 import pathlib
 import re
 import sys
+import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -100,9 +107,94 @@ def main() -> int:
     fb = agent.run_diligence(c3, THESIS)
     assert fb["agent"] is False and fb["trail"] == [], fb
     assert "Investment Memo" in fb["memo"] and "Diligence trail" not in fb["memo"], "fallback should be single-shot"
+    assert fb["status"] == "complete", fb["status"]
+
+    # (f) a slow TOOL (sleeps 2s) with a 0.3s step deadline must not block the caller for 2s —
+    # the call returns quickly, the timeout is recorded as an observation, and the loop continues
+    # to the next scripted step rather than crashing or hanging.
+    def slow_tool(args, cand):
+        time.sleep(2.0)
+        return {"ok": True, "sources": ["https://slow.example/never-cited"]}  # never reached in time
+
+    def fast_tool(args, cand):
+        return {"ok": True, "sources": ["https://fast.example/real"]}
+
+    slow_then_fast = scripted([
+        {"action": "call_tool", "tool": "slow", "args": {}, "reason": "will time out"},
+        {"action": "call_tool", "tool": "fast", "args": {}, "reason": "quick follow-up"},
+        {"action": "finish", "reason": "done"},
+    ])
+    c4 = Candidate(name="SlowToolCo", source="test", url="https://slowtoolco.xyz")
+    t0 = time.perf_counter()
+    res_slow = agent.run_diligence(c4, THESIS, tools={"slow": slow_tool, "fast": fast_tool},
+                                   decide=slow_then_fast, max_steps=5, step_timeout=0.3)
+    elapsed = time.perf_counter() - t0
+    assert elapsed < 1.5, f"slow tool should not block the caller (took {elapsed:.2f}s)"
+    assert res_slow["status"] == "incomplete", res_slow["status"]
+    assert res_slow["sources"] == ["https://fast.example/real"], \
+        f"the timed-out tool's source must NOT be gathered: {res_slow['sources']}"
+    slow_step = next(s for s in res_slow["trail"] if s.get("tool") == "slow")
+    assert slow_step.get("timed_out") is True, slow_step
+
+    # (g) a slow DECIDE (sleeps 2s) with a 0.3s step deadline ends the loop early instead of
+    # hanging — the caller returns quickly with an 'incomplete' status and a 'finish' reason
+    # naming the timeout.
+    calls = {"n": 0}
+
+    def slow_decide(goal, thesis, transcript):
+        calls["n"] += 1
+        time.sleep(2.0)
+        return {"action": "call_tool", "tool": "fast", "args": {}, "reason": "never reached in time"}
+
+    c5 = Candidate(name="SlowDecideCo", source="test", url="https://slowdecideco.xyz")
+    t0 = time.perf_counter()
+    res_decide = agent.run_diligence(c5, THESIS, tools={"fast": fast_tool}, decide=slow_decide,
+                                     max_steps=5, step_timeout=0.3)
+    elapsed = time.perf_counter() - t0
+    assert elapsed < 1.5, f"slow decide should not block the caller (took {elapsed:.2f}s)"
+    assert res_decide["status"] == "incomplete", res_decide["status"]
+    assert res_decide["trail"] and "timed out" in res_decide["trail"][-1]["reason"], res_decide["trail"]
+    assert res_decide["sources"] == [], "no tool ever ran — nothing should be gathered"
+
+    # (h) an OVERALL deadline that's already passed (0s) cuts the loop off before even the
+    # first step — the deadline is checked before every step, not just after a slow one.
+    c6 = Candidate(name="DeadlineCo", source="test", url="https://deadlineco.xyz")
+    res_deadline = agent.run_diligence(
+        c6, THESIS, tools={"fast": fast_tool},
+        decide=scripted([{"action": "call_tool", "tool": "fast", "args": {}, "reason": "x"}] * 5),
+        max_steps=5, step_timeout=5, total_timeout=0)
+    assert res_deadline["status"] == "incomplete", res_deadline["status"]
+    assert "deadline exceeded" in res_deadline["trail"][-1]["reason"], res_deadline["trail"]
+    assert res_deadline["sources"] == [], "the overall deadline hit before any tool call"
+
+    # (i) no-fabrication holds on a partial/timed-out run: every URL in the memo is a gathered
+    # source or the candidate's own URL — same verification as (d), applied to a timed-out run.
+    for partial_res, cand in ((res_slow, c4), (res_decide, c5)):
+        allowed = set(partial_res["sources"]) | {cand.url}
+        urls = re.findall(r"https?://[^\s,)\]]+", partial_res["memo"])
+        unverified = [u for u in urls if u not in allowed]
+        assert not unverified, f"partial-run memo contains unverified citation(s): {unverified}"
+        assert "https://slow.example/never-cited" not in partial_res["memo"], \
+            "a source from a timed-out tool call must never be cited"
+
+    # (j) S-10: every agent run reports a budget (steps used vs. cap, elapsed vs. the overall
+    # deadline) and prints it in the memo's trail footer — both on a clean finish and on a
+    # capped/partial one, so a reader can see at a glance whether a run was cut short.
+    assert res["budget"]["steps_used"] == 2, res["budget"]
+    assert res["budget"]["steps_max"] == 6, res["budget"]
+    assert res["budget"]["status"] == "complete", res["budget"]
+    assert f"Budget: {res['budget']['steps_used']}/6 steps" in memo_md, memo_md
+
+    assert res_deadline["budget"]["steps_used"] == 0, res_deadline["budget"]
+    assert res_deadline["budget"]["status"] == "incomplete", res_deadline["budget"]
+    assert "Budget: 0/5 steps" in res_deadline["memo"], res_deadline["memo"]
+    assert "status: incomplete" in res_deadline["memo"], res_deadline["memo"]
 
     print("agent check: PASS  (loop dispatched 2 tools, deduped the repeat, respected max_steps=2, "
-          "trail + verified-only citations in memo, graceful single-shot fallback)")
+          "trail + verified-only citations in memo, graceful single-shot fallback, "
+          f"slow tool bounded to {elapsed:.2f}s < its 2s sleep, slow decide + overall deadline "
+          "both end the loop early with status=incomplete, budget reported + footer rendered on "
+          "both clean and capped runs, and no-fabrication holds throughout)")
     return 0
 
 

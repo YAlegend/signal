@@ -55,5 +55,11 @@ jobs:
       - name: Diligence agent (tool-using ReAct loop) check (offline)
         run: PYTHONPATH=src python evals/agent_check.py
 
+      - name: Source-health registry/tracker check (offline)
+        run: PYTHONPATH=src python evals/source_health_check.py
+
+      - name: Slack digest delivery check (offline)
+        run: PYTHONPATH=src python evals/notify_slack_check.py
+
       - name: Phase 0 backtest demo (smoke)
         run: PYTHONPATH=src python -m signalfund.backtest --demo

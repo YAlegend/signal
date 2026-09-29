@@ -7,12 +7,15 @@
 # Each entry: { fid, label }. Look up an account's numeric FID on its Warpcast profile
 # (or via Neynar). The entries below are PLACEHOLDERS — uncomment + replace with the real
 # accounts you trust (5–10 is a good seed). With all commented, network_radar returns [].
+# Seed v1 (2026-09-25) — investor-weighted, verified via Warpcast's public user-lookup API
+# (bio cross-checked against each person's real-world role; see chat history for the trail).
+# Deliberately narrow for now — expand with more investors/founders/researchers over time.
 smart_accounts:
-  # - { fid: 3,    label: "dwr.eth — Farcaster founder (placeholder)" }
-  # - { fid: 2,    label: "v — Varun Srinivasan (placeholder)" }
-  # - { fid: 1237, label: "example VC partner (placeholder)" }
-  # - { fid: 5650, label: "example repeat founder (placeholder)" }
-  # - { fid: 99,   label: "example crypto researcher (placeholder)" }
-  # - { fid: 1689, label: "example angel investor (placeholder)" }
-  # - { fid: 7960, label: "example infra builder (placeholder)" }
-  # - { fid: 4823, label: "example DeFi founder (placeholder)" }
+  - { fid: 24,     label: "jesse — Jesse Walden, Founder/MP @ Variant (led Variant's Farcaster seed)" }
+  - { fid: 12,     label: "linda — Linda Xie, co-founder @ Scalar Capital" }
+  - { fid: 402,    label: "kylesamani — Kyle Samani, co-founder/MP @ Multicoin Capital" }
+  - { fid: 189394, label: "avichal — Avichal Garg, co-founder/GP @ Electric Capital" }
+  - { fid: 7523,   label: "teng — Teng Yan, Delphi — crypto x AI research/investing" }
+  - { fid: 1049,   label: "regan — Regan Bozman, partner @ Lattice" }
+  - { fid: 138,    label: "mdudas — Michael Dudas, GP @ 6th Man Ventures, founder The Block" }
+  - { fid: 57,     label: "packy — Packy McCormick, Not Boring Capital" }
