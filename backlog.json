@@ -1,7 +1,7 @@
 {
   "project": "Signal",
   "description": "Thesis-driven dealflow sourcing & diligence agent (early-stage crypto / AI). Scrumban backlog. This file is the single source of truth for project status; the terminal CLI and the HTML board both read it.",
-  "updated": "2026-09-28",
+  "updated": "2026-10-10",
   "meta": {
     "statuses": [
       "backlog",
@@ -430,7 +430,7 @@
       "points": 3,
       "mos": "Should",
       "sprint": "Sprint 2",
-      "status": "review",
+      "status": "done",
       "blockedBy": [],
       "criteria": [
         "A per-memo token / step budget is enforced.",
@@ -464,7 +464,7 @@
       "points": 8,
       "mos": "Should",
       "sprint": "R3 (Later)",
-      "status": "review",
+      "status": "done",
       "blockedBy": [],
       "criteria": [
         "A daily scheduled run produces a digest delivered to email or Slack.",
