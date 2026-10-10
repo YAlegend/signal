@@ -1,5 +1,27 @@
 # Signal — dealflow digest
-_2026-07-01 · 8 candidates, ranked by thesis fit_
+_2026-09-18 · 8 candidates, ranked by thesis fit_
+
+_Sources: 0 live · 13 skipped · 0 failed_
+
+<details><summary>source health</summary>
+
+| source | state | reason |
+|---|---|---|
+| github | skipped | demo mode (fixtures) |
+| code_health | skipped | demo mode (fixtures) |
+| onchain | skipped | demo mode (fixtures) |
+| social | skipped | demo mode (fixtures) |
+| network_radar | skipped | demo mode (fixtures) |
+| watchlist | skipped | demo mode (fixtures) |
+| pre_public | skipped | demo mode (fixtures) |
+| team | skipped | demo mode (fixtures) |
+| team_github | skipped | demo mode (fixtures) |
+| team_harmonic | skipped | demo mode (fixtures) |
+| harmonic | skipped | demo mode (fixtures) |
+| messari | skipped | demo mode (fixtures) |
+| nansen | skipped | demo mode (fixtures) |
+
+</details>
 
 ## 1. veritas-zk/veritas  ·  69.8/100
 **Source:** github  ·  **Signal:** 240 stars/day (+1,680 in 7d)  ·  **Themes:** agent_control_planes, ai_x_crypto, crypto_infra

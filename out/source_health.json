@@ -1,0 +1,80 @@
+[
+  {
+    "name": "github",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "code_health",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "onchain",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "social",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "network_radar",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "watchlist",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "pre_public",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "team",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "team_github",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "team_harmonic",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "harmonic",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "messari",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  },
+  {
+    "name": "nansen",
+    "state": "skipped",
+    "reason": "demo mode (fixtures)",
+    "count": null
+  }
+]
