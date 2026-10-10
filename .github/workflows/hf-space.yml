@@ -1,0 +1,61 @@
+name: Deploy live demo (Hugging Face Space)
+
+# Mirrors the app into a Hugging Face Docker Space — the interactive "try it live" demo next to
+# the always-on static dashboard on GitHub Pages. The Space builds ./Dockerfile (offline demo,
+# heuristic scorer, ZERO app secrets) and serves the full web UI on port 7860.
+#
+# One-time setup (repo ▸ Settings ▸ Secrets and variables ▸ Actions):
+#   secret   HF_TOKEN  — a Hugging Face access token with WRITE access
+#   variable HF_SPACE  — the Space id, e.g. "your-hf-username/signal"
+# Until both are set this workflow exits green with a "skipped" note (graceful absence).
+
+on:
+  workflow_dispatch:          # Actions ▸ "Deploy live demo (Hugging Face Space)" ▸ Run workflow
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "config/**"
+      - "data/**"
+      - "pyproject.toml"
+      - "Dockerfile"
+      - ".dockerignore"
+      - "deploy/hf-space/**"
+      - ".github/workflows/hf-space.yml"
+
+concurrency:
+  group: hf-space
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble Space contents
+        run: |
+          mkdir space
+          # Tracked files only (git archive) — never .env, *.db or local ground truth.
+          git archive HEAD src config data pyproject.toml Dockerfile .dockerignore | tar -x -C space
+          cp deploy/hf-space/README.md space/README.md   # Space card (YAML header = Docker SDK, port 7860)
+          du -sh space
+
+      - name: Push to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ vars.HF_SPACE }}
+        run: |
+          if [ -z "$HF_TOKEN" ] || [ -z "$HF_SPACE" ]; then
+            echo "HF_TOKEN / HF_SPACE not set — skipping Space deploy." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          cd space
+          git init -q -b main
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_SHA::7} from github.com/${GITHUB_REPOSITORY}"
+          # The Space is a build target generated from this repo, so force-push replaces it wholesale.
+          git push --force "https://${HF_SPACE%%/*}:${HF_TOKEN}@huggingface.co/spaces/${HF_SPACE}" main
+          echo "Deployed to https://huggingface.co/spaces/${HF_SPACE}" | tee -a "$GITHUB_STEP_SUMMARY"

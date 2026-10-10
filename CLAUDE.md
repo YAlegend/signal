@@ -66,6 +66,11 @@ PYTHONPATH=src python -m signalfund.webapp                # add --port 8765 / --
 
 # 7) Custom MCP server (star-velocity) — for use inside Claude Code via .mcp.json, or standalone:
 python mcp_servers/github_velocity/server.py
+
+# 8) HOSTED DEMOS — static: GitHub Pages (docs/, refresh-demo.yml) at https://yalegend.github.io/signal/
+#   live: Hugging Face Docker Space built from ./Dockerfile (offline demo, heuristic, port 7860),
+#   auto-deployed by .github/workflows/hf-space.yml once secret HF_TOKEN + variable HF_SPACE are set
+#   (skips green until then). Local container: docker build -t signal-demo . && docker run -p 7860:7860 signal-demo
 ```
 
 Open `out/digest.md` (the ranked dealflow) or `out/backtest_report.md` (the go/no-go) to see results.

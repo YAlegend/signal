@@ -1,0 +1,16 @@
+# Never ship secrets or local state into the image.
+.env
+.env.*
+*.db
+*.db-journal
+.git
+.github
+.claude
+.venv
+venv
+__pycache__
+*.py[cod]
+.DS_Store
+out
+docs
+data/backtest/ground_truth.portfolio*.json

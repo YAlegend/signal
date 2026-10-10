@@ -596,7 +596,7 @@
       "points": 2,
       "mos": "Must",
       "sprint": "Sprint 1",
-      "status": "review",
+      "status": "inprogress",
       "blockedBy": [],
       "criteria": [
         "The public demo runs end-to-end with zero paid keys.",
@@ -613,11 +613,11 @@
           "done": true
         },
         {
-          "text": "Smoke-test on Render + GitHub Actions.",
+          "text": "Smoke-test hosted demos (GitHub Pages + Hugging Face Space) + GitHub Actions.",
           "done": false
         }
       ],
-      "notes": "Reverted from done — Render + GitHub Actions smoke test (action item 3) was never actually run. Confirmed both before moving back to review."
+      "notes": "Reverted from done — Render + GitHub Actions smoke test (action item 3) was never actually run. Confirmed both before moving back to review. | Render retired (service unreachable; no deploys recorded). Replaced by Hugging Face Docker Space (Dockerfile + hf-space.yml) next to GitHub Pages. Space build+run simulated locally: UI, demo run, backtest, memo, live-no-keys all OK, 0 tracebacks. BLOCKED on user: create HF Space + set HF_TOKEN secret / HF_SPACE variable, then smoke-test the live URL."
     }
   ]
 }
