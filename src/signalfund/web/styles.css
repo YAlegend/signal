@@ -118,6 +118,24 @@ button.primary:disabled { opacity: .55; cursor: progress; }
 .switch input:checked + .slider::before { transform: translateX(17px); background: #fff; }
 .switch input:focus-visible + .slider { outline: 2px solid var(--accent-soft); outline-offset: 2px; }
 
+/* source-health panel */
+#source-health-panel { margin-top: 16px; }
+.shealth-row { display: flex; align-items: center; gap: 12px; padding: 7px 2px; border-bottom: 1px solid #161f2e; font-size: 13px; }
+.shealth-row:last-child { border-bottom: 0; }
+.badge-state {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .5px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; min-width: 62px; text-align: center;
+}
+.badge-state.live { color: #6ee7b7; background: #0e2018; border-color: #14532d; }
+.badge-state.skipped { color: var(--gray); background: #161c27; border-color: #2a3445; }
+.badge-state.failed { color: #fca5a5; background: #2a1414; border-color: #5b1a1a; }
+
+/* agent-memo live progress (S-03: polled while the diligence loop runs) */
+.agent-progress { background: #121826; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
+.agent-step { padding: 3px 0; color: var(--text); }
+.agent-step.finish { color: #6ee7b7; }
+.agent-step-timeout { color: #fbbf24; }
+
 /* stats + controls */
 .stats { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: #cbd5e1; margin: 0 0 18px; }
 .stats .stat b { color: #fff; font-size: 15px; }

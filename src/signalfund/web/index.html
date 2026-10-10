@@ -66,6 +66,14 @@
           <div class="scorer-row" id="signal-scorer"></div>
         </div>
 
+        <div class="panel" id="source-health-panel">
+          <div class="panel-head">
+            <h3>Source health <span class="info" tabindex="0" role="note" aria-label="Every configured source/signal from the last run — live (attempted), skipped (no key, or disabled), or failed (with a reason). A missing key never errors, it just shows skipped.">ⓘ<span class="tip">Every configured source/signal from the last run — live (attempted), skipped (no key, or disabled), or failed (with a reason). A missing key never errors, it just shows skipped.</span></span></h3>
+            <span class="muted" id="source-health-summary">no run yet</span>
+          </div>
+          <div id="source-health-rows"></div>
+        </div>
+
         <pre class="log" id="run-log" hidden></pre>
       </section>
 
@@ -93,6 +101,7 @@
       <section class="view" id="view-memos">
         <h1>Investment memos <span class="info" tabindex="0" role="note" aria-label="A first-draft memo built from the scorer + thesis. Every claim links to a source; unbacked claims are dropped. With an Anthropic key, a frontier model writes it in the fund's voice.">ⓘ<span class="tip">A first-draft memo built from the scorer + thesis. Every claim links to a source; unbacked claims are dropped. With an Anthropic key, a frontier model writes it in the fund's voice.</span></span></h1>
         <p class="lead">Source-cited memos. Offline they're built from the scorer + thesis; with <code>ANTHROPIC_API_KEY</code> set, a frontier model writes them in the fund's voice.</p>
+        <div class="agent-progress" id="agent-progress" hidden></div>
         <div class="memos-layout">
           <div class="memo-list" id="memo-list"></div>
           <div class="memo-view" id="memo-view"><div class="empty">Select a memo, or generate one from a digest candidate.</div></div>

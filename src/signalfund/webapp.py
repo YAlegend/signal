@@ -21,6 +21,7 @@ import json
 import os
 import pathlib
 import threading
+import uuid
 import webbrowser
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -40,6 +41,12 @@ THESIS_PATH = ROOT / "config" / "thesis.yaml"
 # Append-only human-feedback log (👍/👎 on surfaced candidates). Rows are
 # eval-compatible (name/summary/tags/label) so they can later seed eval_set.jsonl.
 FEEDBACK_PATH = ROOT / "data" / "feedback.jsonl"
+
+# Agent-memo jobs (S-03): the diligence agent can take a while — each step is bounded, but the
+# whole run isn't instant — so it runs in a background thread and the UI polls its live
+# progress instead of blocking the HTTP request. Single-process/localhost only; a lock is enough.
+_JOBS_LOCK = threading.Lock()
+_JOBS: dict = {}  # job_id -> {"status": "running"|"done"|"error", "trail": [...], "result"|"error": ...}
 
 _STATIC_TYPES = {
     ".html": "text/html; charset=utf-8",
@@ -177,6 +184,7 @@ def build_state() -> dict:
     return {
         "digest": _read_out_json("digest.json"),
         "backtest": _read_out_json("backtest_report.json"),
+        "sourceHealth": _read_out_json("source_health.json") or [],
         "memos": _list_memos(),
         "thesis": thesis_text,
         "thesisParsed": parsed,
@@ -187,6 +195,44 @@ def build_state() -> dict:
         "signals": _signals_state(),
         "feedback": _feedback_votes(),
     }
+
+
+def _write_memo_file(c: Candidate, md: str) -> str:
+    out = _out_dir() / "memos"
+    out.mkdir(parents=True, exist_ok=True)
+    fname = f"{memo_mod._slug(c.name)}.md"
+    (out / fname).write_text(md, encoding="utf-8")
+    return fname
+
+
+def _run_agent_job(job_id: str, c: Candidate, thesis: dict) -> None:
+    """Background thread body for an agent memo (S-03): drives run_diligence_events(), pushing
+    each step into the job's `trail` as it happens so /api/memo/progress can poll live status,
+    then writes the memo file and stores the final result. Never lets an exception escape —
+    a broken run surfaces as job status 'error', it doesn't hang the poller."""
+    from . import agent as agent_mod
+    trail = []
+    try:
+        for ev in agent_mod.run_diligence_events(c, thesis):
+            if ev.get("event") == "done":
+                result = {k: v for k, v in ev.items() if k != "event"}
+                fname = _write_memo_file(c, result["memo"])
+                tools = [s.get("tool") for s in result.get("trail", []) if s.get("tool") != "finish"]
+                with _JOBS_LOCK:
+                    _JOBS[job_id] = {
+                        "status": "done", "trail": result.get("trail", trail),
+                        "result": {"ok": True, "name": fname, "markdown": result["memo"],
+                                  "scorer": _scorer_label(), "agent": result.get("agent", True),
+                                  "tools": tools, "runStatus": result.get("status", "complete")},
+                    }
+            else:
+                trail.append(ev)
+                with _JOBS_LOCK:
+                    if job_id in _JOBS:
+                        _JOBS[job_id]["trail"] = list(trail)
+    except Exception as e:  # noqa: BLE001 — surfaced to the poller, never left hanging
+        with _JOBS_LOCK:
+            _JOBS[job_id] = {"status": "error", "trail": trail, "error": f"{type(e).__name__}: {e}"}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -246,6 +292,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"votes": _feedback_votes()})
         if path == "/api/memo":
             return self._get_memo(query.get("name", [""])[0])
+        if path == "/api/memo/progress":
+            return self._memo_progress(query.get("job_id", [""])[0])
         if path == "/api/thesis":
             return self._json({"text": THESIS_PATH.read_text(encoding="utf-8")})
         return self._json({"error": "not found"}, 404)
@@ -291,7 +339,8 @@ class Handler(BaseHTTPRequestHandler):
             ok, err = False, f"{type(e).__name__}: {e}"
         self._json({"ok": ok, "error": err, "log": buf.getvalue(),
                     "scorer": _scorer_label(),  # the scorer that actually ran
-                    "digest": _read_out_json("digest.json") or []})
+                    "digest": _read_out_json("digest.json") or [],
+                    "sourceHealth": _read_out_json("source_health.json") or []})
 
     def _backtest(self) -> None:
         gt = str(ROOT / "data" / "backtest" / "ground_truth.sample.json")
@@ -331,22 +380,31 @@ class Handler(BaseHTTPRequestHandler):
                           tags=cand.get("tags", []), raw=cand.get("raw", {}))
         thesis = yaml.safe_load(THESIS_PATH.read_text(encoding="utf-8"))
         _apply_scorer_provider(body)   # user-chosen LLM provider for this memo
-        buf = io.StringIO()
-        agent_used, trail = False, []
-        with contextlib.redirect_stdout(buf):
-            if body.get("agent"):        # run the tool-using diligence agent (visible trail)
-                from . import agent as agent_mod
-                res = agent_mod.run_diligence(c, thesis)
-                md, agent_used, trail = res["memo"], res.get("agent", False), res.get("trail", [])
-            else:
+
+        if not body.get("agent"):      # single-shot memo: fast, stays synchronous
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
                 md = memo_mod.build_memo(c, thesis)
-        out = _out_dir() / "memos"
-        out.mkdir(parents=True, exist_ok=True)
-        fname = f"{memo_mod._slug(c.name)}.md"
-        (out / fname).write_text(md, encoding="utf-8")
-        self._json({"ok": True, "name": fname, "markdown": md, "log": buf.getvalue(),
-                    "scorer": _scorer_label(), "agent": agent_used,
-                    "tools": [s.get("tool") for s in trail if s.get("tool") != "finish"]})
+            fname = _write_memo_file(c, md)
+            return self._json({"ok": True, "name": fname, "markdown": md, "log": buf.getvalue(),
+                               "scorer": _scorer_label(), "agent": False, "tools": []})
+
+        # Agent memo: can take a while (bounded per-step, but not instant) — run it in the
+        # background and let the UI poll /api/memo/progress for live step-by-step status
+        # instead of blocking this request (S-03: "streams step-by-step progress to the UI").
+        job_id = uuid.uuid4().hex[:12]
+        with _JOBS_LOCK:
+            _JOBS[job_id] = {"status": "running", "trail": []}
+        threading.Thread(target=_run_agent_job, args=(job_id, c, thesis),
+                         daemon=True).start()
+        self._json({"ok": True, "streaming": True, "job_id": job_id})
+
+    def _memo_progress(self, job_id: str) -> None:
+        with _JOBS_LOCK:
+            job = _JOBS.get(job_id)
+            if job is None:
+                return self._json({"error": "no such job"}, 404)
+            self._json(dict(job))  # shallow copy — safe to serialize outside the lock
 
     def _feedback(self, body: dict) -> None:
         """Record a 👍/👎 (or 'clear') on a digest candidate, by digest index.

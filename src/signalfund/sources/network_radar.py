@@ -13,7 +13,8 @@ convergence is weighted by the followers' reputation. The FIRST run only establi
 baseline (no convergence emitted); subsequent runs detect new convergence.
 
 Needs NEYNAR_API_KEY; returns [] without it, without a smart-accounts list, or without a
-Store to diff against (no crash).
+Store to diff against (no crash). Neynar 429s are retried (Retry-After if given, else
+exponential backoff) rather than silently truncating a following-list page.
 
 NOTE: no NEYNAR_API_KEY was available to verify the exact `/v2/farcaster/following` +
 `/user/bulk` response shapes — parsing here is defensive on purpose (mirrors
@@ -23,7 +24,9 @@ from __future__ import annotations
 
 import os
 import pathlib
+import random
 import re
+import time
 
 from .base import Source
 from ..models import Candidate
@@ -35,6 +38,10 @@ OPENRANK_API = "https://graph.cast.k3l.io"
 
 MIN_CONVERGENCE = int(os.getenv("SIGNAL_RADAR_MIN_CONVERGENCE", "2"))
 MIN_SMART_OPENRANK = float(os.getenv("SIGNAL_RADAR_MIN_OPENRANK", "0.0"))  # 0..1 percentile floor
+MAX_RETRIES = int(os.getenv("SIGNAL_RADAR_MAX_RETRIES", "3"))
+
+# Indirected so offline tests can fake the clock without actually sleeping.
+_sleep = time.sleep
 
 
 # ---- config -----------------------------------------------------------------
@@ -93,6 +100,21 @@ def _client(key: str):
                         timeout=30)
 
 
+def _get(cx, path, params, max_retries: int = MAX_RETRIES):
+    """GET with 429 retry (Retry-After if given, else exponential backoff + jitter) — a
+    radar run walks every smart account's following list, and Neynar's free tier rate-limits
+    fast, so a single 429 shouldn't cut a snapshot short."""
+    r = None
+    for attempt in range(max_retries + 1):
+        r = cx.get(path, params=params)
+        if r.status_code != 429 or attempt == max_retries:
+            return r
+        retry_after = r.headers.get("retry-after")
+        wait = float(retry_after) if retry_after else min(2.0 ** attempt, 15.0)
+        _sleep(wait + random.uniform(0.0, 0.5))
+    return r
+
+
 def _following_fids(cx, fid, max_pages: int = 3) -> set:
     """Set of FIDs that `fid` currently follows (Neynar v2 /following, paged + capped)."""
     out, cursor = set(), None
@@ -100,7 +122,7 @@ def _following_fids(cx, fid, max_pages: int = 3) -> set:
         params = {"fid": fid, "limit": 100}
         if cursor:
             params["cursor"] = cursor
-        r = cx.get("/v2/farcaster/following", params=params)
+        r = _get(cx, "/v2/farcaster/following", params)
         if r.status_code != 200:
             break
         body = r.json()
@@ -116,7 +138,7 @@ def _following_fids(cx, fid, max_pages: int = 3) -> set:
 
 
 def _profile(cx, fid) -> dict:
-    r = cx.get("/v2/farcaster/user/bulk", params={"fids": fid})
+    r = _get(cx, "/v2/farcaster/user/bulk", {"fids": fid})
     if r.status_code != 200:
         return {}
     users = r.json().get("users") or []

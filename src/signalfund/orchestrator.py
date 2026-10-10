@@ -11,6 +11,7 @@ from . import dedup as dedup_mod
 from . import digest
 from . import env
 from . import scoring
+from . import source_health
 from .models import Candidate
 from .store import Store
 
@@ -43,11 +44,13 @@ def build_sources():
             WatchlistSource(), MessariSource(), NansenSource()]
 
 
-def enrich(candidates: list, enabled=None) -> None:
+def enrich(candidates: list, enabled=None, tracker: source_health.Tracker = None) -> None:
     """Networked signal enrichment (live only): each module writes signal fields
     onto candidate.raw, which the scorer turns into sub-scores. No-op per candidate
     on any error, so a flaky API never blocks a run. Demo fixtures are pre-enriched.
-    `enabled` (a set of signal names, or None=all) skips disabled signals' enrich pass."""
+    `enabled` (a set of signal names, or None=all) skips disabled signals' enrich pass.
+    `tracker` (optional) records source-health rows: a disabled pass is 'skipped', an
+    exception is 'failed' + reason; anything else falls back to the key-presence probe."""
     from .sources import messari, nansen, onchain, pre_public, social_farcaster, team
     from .sources.github_velocity import enrich_code_health
     passes = (("code_health", enrich_code_health),            # Ticket 1
@@ -61,11 +64,15 @@ def enrich(candidates: list, enabled=None) -> None:
     for c in candidates:
         for name, fn in passes:
             if enabled is not None and name not in enabled:
+                if tracker is not None:
+                    tracker.record(name, "skipped", reason="disabled by user")
                 continue  # user turned this signal off — skip the (networked) enrich
             try:
                 fn(c)
             except Exception as e:
                 print(f"[signal][warn] enrich({name}) failed for {c.name}: {e}")
+                if tracker is not None:
+                    tracker.record(name, "failed", reason=str(e)[:200])
 
 
 def run(demo: bool = False, limit: int = 25, out_dir: str = None,
@@ -78,10 +85,13 @@ def run(demo: bool = False, limit: int = 25, out_dir: str = None,
     thesis = load_thesis(thesis_path)
     # The store (star-velocity snapshots) is only needed for live sources.
     store = None if demo else Store(os.getenv("SIGNAL_DB", "signal.db"))
+    tracker = source_health.Tracker()
 
     if demo:
         candidates = load_fixtures(fixtures)
         print(f"[signal] demo mode — loaded {len(candidates)} fixture candidates")
+        for name in source_health.registry_names():
+            tracker.record(name, "skipped", reason="demo mode (fixtures)")
     else:
         candidates = []
         for s in build_sources():
@@ -90,17 +100,20 @@ def run(demo: bool = False, limit: int = 25, out_dir: str = None,
             if enabled_signals is not None and s.name == "network_radar" \
                     and "network_radar" not in enabled_signals:
                 print("[signal] network_radar disabled — skipping source")
+                tracker.record(s.name, "skipped", reason="disabled by user")
                 continue
             try:
                 got = s.fetch(limit=limit, store=store)
                 print(f"[signal] {s.name}: {len(got)} candidates")
                 candidates += got
+                tracker.record_result(s.name, count=len(got))
             except Exception as e:
                 print(f"[signal][warn] {s.name} failed: {e}")
+                tracker.record_result(s.name, error=e)
 
     candidates = dedup_mod.dedup(candidates)
     if not demo:
-        enrich(candidates, enabled_signals)  # networked sub-signals; demo fixtures pre-baked
+        enrich(candidates, enabled_signals, tracker=tracker)  # networked sub-signals; demo fixtures pre-baked
     scorer = scoring.get_scorer(thesis, enabled_signals=enabled_signals)
     if enabled_signals is not None:
         print(f"[signal] signals enabled: {sorted(enabled_signals) or '(none)'}")
@@ -108,7 +121,8 @@ def run(demo: bool = False, limit: int = 25, out_dir: str = None,
     scored = sorted((scorer.score(c) for c in candidates),
                     key=lambda s: s.score, reverse=True)
 
-    paths = digest.write(scored, out_dir=out_dir)
+    health = tracker.finalize()
+    paths = digest.write(scored, out_dir=out_dir, source_health=health)
     print(f"[signal] wrote {paths['markdown']} and {paths['json']}")
     try:
         from . import dashboard
