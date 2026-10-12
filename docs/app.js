@@ -13,7 +13,8 @@ function info(tip, pos) {
 }
 
 const state = { digest: [], backtest: null, memos: [], thesisParsed: null, thesis: {}, feedback: {},
-                signals: [], enabled: {}, providers: [], scorerProvider: "groq", scorer: "?", mode: "demo" };
+                signals: [], enabled: {}, providers: [], scorerProvider: "groq", scorer: "?", mode: "demo",
+                sourceHealth: [] };
 const LS_SIGNALS = "signal.enabledSignals";
 // v2: default scorer is now Groq (free Llama 3.3 70B). Bumping the key supersedes any older saved
 // choice (e.g. a stale Ollama pick) so the new default takes effect; users can still change it.
@@ -188,6 +189,27 @@ function renderSignals() {
     ghNote;
 }
 
+/* ---------- source-health panel (per-run: live / skipped / failed) ---------- */
+function renderSourceHealth() {
+  const box = $("#source-health-rows");
+  if (!box) return;
+  const rows = state.sourceHealth || [];
+  const live = rows.filter((r) => r.state === "live").length;
+  const skipped = rows.filter((r) => r.state === "skipped").length;
+  const failed = rows.filter((r) => r.state === "failed").length;
+  $("#source-health-summary").textContent = rows.length
+    ? `${live} live · ${skipped} skipped · ${failed} failed`
+    : "no run yet";
+  box.innerHTML = rows.map((r) => {
+    const count = r.count !== null && r.count !== undefined ? ` (${r.count})` : "";
+    return `<div class="shealth-row">
+      <span class="badge-state ${esc(r.state)}">${esc(r.state)}${count}</span>
+      <span class="sig-name">${esc(r.name)}</span>
+      <span class="muted">${esc(r.reason || "")}</span>
+    </div>`;
+  }).join("");
+}
+
 $("#signal-rows").addEventListener("change", (e) => {
   const cb = e.target.closest("input[data-signal]");
   if (!cb) return;
@@ -208,6 +230,8 @@ $("#run-btn").onclick = async () => {
     });
     log.textContent = r.log || "(no output)";
     state.digest = r.digest || [];
+    state.sourceHealth = r.sourceHealth || [];
+    renderSourceHealth();
     if (r.scorer) { state.scorer = r.scorer; $("#scorer-pill").textContent = "scorer: " + r.scorer; renderSignals(); }
     refreshCounts();
     if (r.ok) { toast(`Run complete — ${state.digest.length} candidates · ${r.scorer || ""}`); show("digest"); }
@@ -363,14 +387,52 @@ async function writeMemo(idx, useAgent) {
       body: JSON.stringify({ index: idx, scorer_provider: state.scorerProvider, agent: !!useAgent }),
     });
     if (!r.ok) return toast(r.error || "memo failed", true);
-    if (!state.memos.includes(r.name)) state.memos.push(r.name);
-    refreshCounts();
-    show("memos");
-    renderMemoList();
-    openMemo(r.name, r.markdown);
-    if (useAgent && r.agent) toast(`Agent memo — tools chosen: ${(r.tools || []).join(", ") || "none"}`);
-    else toast("Memo written → out/memos/" + r.name);
+    if (r.streaming && r.job_id) {
+      show("memos");
+      await pollAgentJob(r.job_id);
+    } else {
+      finishMemo(r, false);
+    }
   } catch (e) { toast(e.message, true); }
+}
+
+// S-03: the agent runs in the background; poll its live progress instead of blocking.
+function renderAgentProgress(trail) {
+  const box = $("#agent-progress");
+  if (!box) return;
+  box.hidden = false;
+  box.innerHTML = (trail || []).map((s) => {
+    if (s.event === "finish") return `<div class="agent-step finish">◆ finished — ${esc(s.reason || "")}</div>`;
+    const timedOut = s.timed_out ? ' <span class="agent-step-timeout">(timed out)</span>' : "";
+    return `<div class="agent-step">▸ <b>${esc(s.tool)}</b> — ${esc(s.reason || "")}${timedOut}</div>`;
+  }).join("") || '<div class="agent-step">▸ starting…</div>';
+}
+
+async function pollAgentJob(jobId) {
+  for (;;) {
+    let p;
+    try { p = await api("/api/memo/progress?job_id=" + encodeURIComponent(jobId)); }
+    catch (e) { toast(e.message, true); return; }
+    renderAgentProgress(p.trail || []);
+    if (p.status === "done") { finishMemo(p.result, true); return; }
+    if (p.status === "error") { toast(p.error || "agent failed", true); return; }
+    await new Promise((res) => setTimeout(res, 700));
+  }
+}
+
+function finishMemo(r, wasAgent) {
+  const box = $("#agent-progress");
+  if (box) box.hidden = true;
+  if (!state.memos.includes(r.name)) state.memos.push(r.name);
+  refreshCounts();
+  renderMemoList();
+  openMemo(r.name, r.markdown);
+  if (wasAgent && r.agent) {
+    const partial = r.runStatus === "incomplete" ? " (timed out — partial evidence)" : "";
+    toast(`Agent memo — tools chosen: ${(r.tools || []).join(", ") || "none"}${partial}`);
+  } else {
+    toast("Memo written → out/memos/" + r.name);
+  }
 }
 
 function renderMemoList() {
@@ -613,6 +675,7 @@ async function boot() {
     state.memos = s.memos || [];
     state.feedback = s.feedback || {};
     state.signals = s.signals || [];
+    state.sourceHealth = s.sourceHealth || [];
     state.scorer = s.scorer || "?";
     state.providers = s.providers || [];
     // Default to Groq (free Llama) when it's configured; else Auto. A saved choice always wins.
@@ -624,6 +687,7 @@ async function boot() {
     $("#scorer-pill").textContent = "scorer: " + (s.scorer || "?");
     loadEnabled(state.signals);
     renderSignals();
+    renderSourceHealth();
     renderScorerSelect();
     renderThesis();
     refreshCounts();

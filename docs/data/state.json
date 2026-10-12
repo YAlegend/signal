@@ -18,7 +18,7 @@
 "velocity_per_day": 240,
 "language": "Go"
 },
-"discovered_at": "2026-10-05T13:21:05.586658+00:00"
+"discovered_at": "2026-10-12T14:10:48.359886+00:00"
 },
 "score": 69.8,
 "thesis_fit": "Moderate fit (69.8/100). Matches Agent control planes / trust infra, AI x crypto / agentic, Crypto infrastructure \u2014 the agent-native, control-plane positioning the fund backs. Signal: 240 stars/day (+1,680 in 7d). Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
@@ -67,7 +67,7 @@
 "contributor_gini": 0.22,
 "contributors": 14
 },
-"discovered_at": "2026-10-05T13:21:05.586637+00:00"
+"discovered_at": "2026-10-12T14:10:48.359867+00:00"
 },
 "score": 67.9,
 "thesis_fit": "Moderate fit (67.9/100). Matches Agent control planes / trust infra, AI x crypto / agentic \u2014 the agent-native, control-plane positioning the fund backs. Signal: 612 stars/day (+4,300 in 7d). Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
@@ -117,7 +117,7 @@
 "technical_ceo": true,
 "team_size": 3
 },
-"discovered_at": "2026-10-05T13:21:05.586655+00:00"
+"discovered_at": "2026-10-12T14:10:48.359883+00:00"
 },
 "score": 64.1,
 "thesis_fit": "Moderate fit (64.1/100). Matches Agent control planes / trust infra, AI x crypto / agentic \u2014 the agent-native, control-plane positioning the fund backs. Signal: pre-seed, stealth; 3 ex-Stripe/Lightning founders. Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
@@ -170,7 +170,7 @@
 "technical_ceo": true,
 "frontier_lab_alum": true
 },
-"discovered_at": "2026-10-05T13:21:05.586667+00:00"
+"discovered_at": "2026-10-12T14:10:48.359890+00:00"
 },
 "score": 50.8,
 "thesis_fit": "Moderate fit (50.8/100). Matches DeFi & financial infra, Post-quantum security, Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: 95 stars/day (+665 in 7d). Open question: Where does sustainable, non-incentivised demand come from?",
@@ -217,7 +217,7 @@
 "tvl_retention": 0.75,
 "holder_gini": 0.72
 },
-"discovered_at": "2026-10-05T13:21:05.586661+00:00"
+"discovered_at": "2026-10-12T14:10:48.359887+00:00"
 },
 "score": 43.0,
 "thesis_fit": "Watch fit (43.0/100). Matches Agent control planes / trust infra, DeFi & financial infra \u2014 the agent-native, control-plane positioning the fund backs. Signal: seed; 40% MoM revenue growth. Open question: Is the trust layer defensible versus incumbent wallets and the model providers?",
@@ -267,7 +267,7 @@
 "neynar_score": 0.72,
 "account_age_days": 410
 },
-"discovered_at": "2026-10-05T13:21:05.586664+00:00"
+"discovered_at": "2026-10-12T14:10:48.359889+00:00"
 },
 "score": 40.2,
 "thesis_fit": "Watch fit (40.2/100). Matches DeFi & financial infra, Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: growing fast on Farcaster; 12k MAU. Open question: Where does sustainable, non-incentivised demand come from?",
@@ -315,7 +315,7 @@
 "hackathon_win": true,
 "post_event_active": false
 },
-"discovered_at": "2026-10-05T13:21:05.586669+00:00"
+"discovered_at": "2026-10-12T14:10:48.359892+00:00"
 },
 "score": 21.4,
 "thesis_fit": "Watch fit (21.4/100). Matches Consumer / social \u2014 in the fund's wider strike zone, though off the core control-plane thesis. Signal: early; trending on CT. Open question: Is there a wedge to distribution, or does it die in a crowded field?",
@@ -355,7 +355,7 @@
 "raw": {
 "stage": "ico"
 },
-"discovered_at": "2026-10-05T13:21:05.586674+00:00"
+"discovered_at": "2026-10-12T14:10:48.359895+00:00"
 },
 "score": 0.0,
 "thesis_fit": "Low fit (0.0/100). Triggers anti-signal: meme coin, anti-signal: presale, anti-signal: airdrop farming, anti-signal: 1000x \u2014 noise, not a backable pre-seed team. Screen out.",
@@ -522,13 +522,96 @@
 }
 ]
 },
+"sourceHealth": [
+{
+"name": "github",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "code_health",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "onchain",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "social",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "network_radar",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "watchlist",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "pre_public",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "team",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "team_github",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "team_harmonic",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "harmonic",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "messari",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+},
+{
+"name": "nansen",
+"state": "skipped",
+"reason": "demo mode (fixtures)",
+"count": null
+}
+],
 "memos": [
 "agent-diligence-example.md",
+"abundantbeing-hermes-browser-extension.md",
 "corpus.md",
 "dive.md",
 "enshell.md",
 "mandate-labs-mandate.md",
+"notasithlord-peerd.md",
 "ruvnet-agent-harness-generator.md",
+"shepherd-agents-shepherd.md",
 "veritas-zk-veritas.md"
 ],
 "thesis": "fund: Pre-seed / early-stage fund\nupdated: 2026-06-23\n# Crypto-native pre-seed. Durable value accrues to the control planes agents rely on.\n# \"Permission is the scarce resource in an age of infinite capability.\"\nthesis_summary: >\n  The fund backs agent-native crypto applications and infrastructure that abstract\n  complexity, collapse workflows, execute reliably, personalise deeply, interoperate\n  openly and deliver trusted outcomes. The durable winners are the control planes\n  agents rely on: identity, permissions, routing, settlement, reputation and\n  verifiability.\n\n# Themes the scorer rewards. weight is relative; keywords are matched case-insensitively.\nthemes:\n  - name: agent_control_planes\n    label: Agent control planes / trust infra\n    weight: 1.0\n    keywords: [policy, permission, delegation, intent, guardrail, escrow, settlement,\n               identity, attestation, verifiable, audit, routing, authorization, recourse]\n    open_question: Is the trust layer defensible versus incumbent wallets and the model providers?\n  - name: ai_x_crypto\n    label: AI x crypto / agentic\n    weight: 0.9\n    keywords: [ai agent, autonomous, agentic, x402, agent payment, mcp, inference, llm, onchain agent]\n    open_question: Does this need crypto, or is it a wrapper that a frontier lab ships natively?\n  - name: defi_infra\n    label: DeFi & financial infra\n    weight: 0.7\n    keywords: [defi, liquidity, perps, prediction market, stablecoin, vault, restaking, treasury, reconciliation]\n    open_question: Where does sustainable, non-incentivised demand come from?\n  - name: crypto_infra\n    label: Crypto infrastructure\n    weight: 0.7\n    keywords: [zk, zero-knowledge, rollup, consensus, data availability, sequencer, interoperability, bridge, account abstraction]\n    open_question: Is this a real bottleneck today, or premature infrastructure?\n  - name: post_quantum\n    label: Post-quantum security\n    weight: 0.6\n    keywords: [post-quantum, pqc, ml-dsa, ml-kem, lattice, quantum-safe, crypto-agility]\n    open_question: Is the migration window near enough to be venture-timed?\n  - name: consumer_social\n    label: Consumer / social\n    weight: 0.5\n    keywords: [consumer, social, wallet, mobile, frames, farcaster, payments app]\n    open_question: Is there a wedge to distribution, or does it die in a crowded field?\n\n# Down-rank obvious noise.\nanti_signals:\n  keywords: [meme coin, presale, airdrop farming, get rich, guaranteed return, 1000x, ponzi, pump]\n\nstage_preference:\n  prefer: [pre-seed, seed, stealth, testnet, early, devnet]\n  avoid: [series b, series c, public, ico, listed]\n\n# Tunable caps (max points) for each additive signal sub-score \u2014 retune the composite\n# without code changes. Values below are the built-in defaults; omit a key to keep its\n# default, lower one to de-emphasise a signal, raise it to lean in. Each signal is\n# reputation-weighted / ratio-based, and the cap is the most it can add on top of\n# fit + traction + credibility. See docs/SIGNALS_BUILD_SPEC.md.\nsignal_weights:\n  code_health: 15    # commit-velocity acceleration + contributor diversity (Gini)\n  onchain: 12        # real stablecoin inflow + sticky non-mercenary TVL + holder spread\n  team: 20           # prior exits / repeat same-domain founder / technical CEO \u2014 highest predictive value\n  social: 12         # Farcaster smart-follower convergence + OpenRank, gated by Neynar score\n  pre_public: 15     # retroactive grants / hackathon-with-persistence / research exit\n\n# How the final composite blends thesis-fit against the combined quality signals.\n# The score is FIT*fit + SIGNAL*signal_strength (+ credibility), so fit stays dominant\n# and strong deals separate instead of all pinning at 100. Values are relative and\n# normalised, so 60/40 and 0.6/0.4 are equivalent. Raise `signal` to let corroboration\n# matter more; raise `fit` to lean harder on thesis match.\ncomposite_weights:\n  fit: 60       # thesis fit \u2014 the dominant component\n  signal: 40    # combined quality signals (traction + code/onchain/team/social/pre_public)\n",
