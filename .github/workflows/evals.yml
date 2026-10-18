@@ -61,5 +61,8 @@ jobs:
       - name: Slack digest delivery check (offline)
         run: PYTHONPATH=src python evals/notify_slack_check.py
 
+      - name: In-browser (Pyodide) demo dispatch + bundle check (offline)
+        run: PYTHONPATH=src python evals/inbrowser_check.py
+
       - name: Phase 0 backtest demo (smoke)
         run: PYTHONPATH=src python -m signalfund.backtest --demo

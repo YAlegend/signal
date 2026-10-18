@@ -21,10 +21,9 @@ const LS_SIGNALS = "signal.enabledSignals";
 const LS_SCORER = "signal.scorerProvider.v2";
 
 async function api(path, opts) {
-  // Static-demo mode (GitHub Pages): no Python backend. Reads are served from baked JSON
-  // under data/; compute actions (run/memo/thesis-save/feedback/backtest) have no server, so
-  // they surface a friendly "runs locally" message. window.SIGNAL_STATIC is set only by the
-  // published docs/index.html — locally it's undefined and this branch is skipped entirely.
+  // Static-demo mode (GitHub Pages): no server — the real Python runs in this browser tab via
+  // Pyodide (see staticApi). window.SIGNAL_STATIC is set only by the published docs/index.html —
+  // locally it's undefined and this branch is skipped entirely.
   if (window.SIGNAL_STATIC) return staticApi(path, opts);
   const res = await fetch(path, opts);
   const ct = res.headers.get("content-type") || "";
@@ -33,19 +32,97 @@ async function api(path, opts) {
   return data;
 }
 
+/* ---------- in-browser Python (GitHub Pages demo) ----------
+   docs/py/signal.zip holds the signalfund package + config + data + the baked out/. Pyodide
+   unpacks it into its in-memory filesystem and every API call goes through the SAME
+   webapp.dispatch() the local http.server uses — so Run / memo / agent memo / backtest /
+   thesis-save / feedback really execute, privately per visitor (edits last until reload). */
+const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
+let _pyPromise = null;
+let _pyLoaded = false;
+
+function pyStatus(text) {
+  const el = document.getElementById("py-status");
+  if (el) el.textContent = text;
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = src; s.onload = resolve;
+    s.onerror = () => reject(new Error("could not load " + src));
+    document.head.appendChild(s);
+  });
+}
+
+function pyReady() {
+  if (_pyPromise) return _pyPromise;
+  pyStatus("Loading Python…");
+  _pyPromise = (async () => {
+    if (!window.loadPyodide) await loadScript(PYODIDE_URL + "pyodide.js");
+    const py = await window.loadPyodide({ indexURL: PYODIDE_URL });
+    await py.loadPackage("pyyaml");
+    const v = window.SIGNAL_VER ? "?v=" + window.SIGNAL_VER : "";
+    const res = await fetch("py/signal.zip" + v);
+    if (!res.ok) throw new Error("bundle missing (" + res.status + ")");
+    py.unpackArchive(await res.arrayBuffer(), "zip", { extractDir: "/home/pyodide/signal" });
+    py.runPython([
+      "import os, sys",
+      "os.chdir('/home/pyodide/signal')",
+      "sys.path.insert(0, 'src')",
+      "from signalfund import webapp",
+    ].join("\n"));
+    const dispatch = py.globals.get("webapp").dispatch_json;
+    pyStatus("Python ready ✓");
+    _pyLoaded = true;
+    return dispatch;
+  })().catch((e) => {
+    console.error("[signal] in-browser Python failed to load", e);
+    pyStatus("Python unavailable — showing the saved snapshot.");
+    _pyPromise = null;  // allow a retry on the next action
+    throw new Error("Couldn't load the in-browser Python (network?). Reload to retry, or run "
+      + "the app locally: python -m signalfund.webapp");
+  });
+  return _pyPromise;
+}
+
 async function staticApi(path, opts) {
   const method = ((opts && opts.method) || "GET").toUpperCase();
-  if (method !== "GET") {
-    throw new Error("Static demo — this action runs locally. Clone the repo and run "
-      + "`python -m signalfund.webapp` for live runs, thesis edits, and memo generation.");
+  const bodyText = (opts && opts.body) || "";
+  if (method === "POST" && path.startsWith("/api/run")) {
+    let body = {};
+    try { body = JSON.parse(bodyText || "{}"); } catch (_) { /* treat as demo */ }
+    if (body.demo === false) {
+      throw new Error("Live mode needs API keys + network access, so it runs in the local app "
+        + "(python -m signalfund.webapp). Switch to Demo to run here in your browser.");
+    }
   }
+  // First paint: until Python has loaded, reads come from the baked snapshot (same payload).
+  if (method === "GET" && !_pyPromise) {
+    const json = await bakedApi(path).catch(() => null);
+    if (json !== null) return json;
+  }
+  if (method !== "GET" && !_pyLoaded) toast("Starting Python in your browser — first time takes ~10s…");
+  const dispatch = await pyReady();
+  let out;
+  try {
+    out = JSON.parse(dispatch(method, path, bodyText));
+  } catch (e) {
+    console.error("[signal] in-browser Python error", e);
+    throw new Error("That action failed in the in-browser demo — details are in the console.");
+  }
+  if (out.status >= 400) throw new Error((out.data && out.data.error) || "request failed");
+  return out.data;
+}
+
+async function bakedApi(path) {
   let file;
   if (path.startsWith("/api/state")) file = "data/state.json";
-  else if (path.startsWith("/api/memo")) {
+  else if (path.startsWith("/api/memo?")) {
     const name = new URLSearchParams(path.split("?")[1] || "").get("name") || "";
     file = "data/memos/" + name + ".json";
   } else {
-    file = "data" + path.replace(/^\/api/, "") + ".json";
+    throw new Error("not baked");
   }
   const v = window.SIGNAL_VER ? "?v=" + window.SIGNAL_VER : "";  // cache-bust data on every rebuild
   const res = await fetch(file + v);
@@ -694,3 +771,5 @@ async function boot() {
   } catch (e) { toast("Failed to load state: " + e.message, true); }
 }
 boot();
+// Pages demo: warm up the in-browser Python while the visitor reads the baked digest.
+if (window.SIGNAL_STATIC) pyReady().catch(() => {});

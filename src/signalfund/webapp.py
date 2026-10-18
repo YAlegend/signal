@@ -235,6 +235,217 @@ def _run_agent_job(job_id: str, c: Candidate, thesis: dict) -> None:
             _JOBS[job_id] = {"status": "error", "trail": trail, "error": f"{type(e).__name__}: {e}"}
 
 
+def _start_job(target, *args) -> None:
+    """Run `target` in a background thread — or inline where threads don't exist (the in-browser
+    Pyodide demo raises RuntimeError on Thread.start). Inline still records the job, so the UI's
+    progress poll simply finds it already finished."""
+    try:
+        threading.Thread(target=target, args=args, daemon=True).start()
+    except RuntimeError:
+        target(*args)
+
+
+# ---- API handlers -----------------------------------------------------------------------
+# Transport-agnostic: each returns (status, payload). The stdlib Handler below serves them over
+# HTTP locally; the GitHub Pages demo calls dispatch() directly inside Pyodide, so both paths run
+# exactly the same code.
+
+def _api_run(body: dict):
+    demo = bool(body.get("demo", True))
+    try:
+        limit = max(1, int(body.get("limit", 25)))
+    except (TypeError, ValueError):
+        limit = 25
+    # User-selected signals. A list -> only those contribute; absent/None -> all on.
+    es = body.get("enabled_signals")
+    enabled = {s for s in es if isinstance(s, str)} if isinstance(es, list) else None
+    _apply_scorer_provider(body)   # user-chosen LLM provider for this run
+    buf = io.StringIO()
+    ok, err = True, None
+    try:
+        with contextlib.redirect_stdout(buf):
+            orchestrator.run(demo=demo, limit=limit, enabled_signals=enabled)
+    except Exception as e:  # live sources may fail without keys — surface, don't crash
+        ok, err = False, f"{type(e).__name__}: {e}"
+    return 200, {"ok": ok, "error": err, "log": buf.getvalue(),
+                 "scorer": _scorer_label(),  # the scorer that actually ran
+                 "digest": _read_out_json("digest.json") or [],
+                 "sourceHealth": _read_out_json("source_health.json") or []}
+
+
+def _api_backtest():
+    gt = str(ROOT / "data" / "backtest" / "ground_truth.sample.json")
+    buf = io.StringIO()
+    ok, err = True, None
+    try:
+        with contextlib.redirect_stdout(buf):
+            backtest_mod.run(gt)
+    except Exception as e:
+        ok, err = False, f"{type(e).__name__}: {e}"
+    return 200, {"ok": ok, "error": err, "log": buf.getvalue(),
+                 "backtest": _read_out_json("backtest_report.json")}
+
+
+def _api_get_memo(name: str):
+    if not name or "/" in name or ".." in name:
+        return 400, {"error": "bad name"}
+    path = _out_dir() / "memos" / name
+    if not path.is_file():
+        return 404, {"error": "not found"}
+    return 200, {"name": name, "markdown": path.read_text(encoding="utf-8")}
+
+
+def _api_make_memo(body: dict):
+    digest = _read_out_json("digest.json") or []
+    try:
+        idx = int(body.get("index", 0))
+    except (TypeError, ValueError):
+        idx = -1
+    if idx < 0 or idx >= len(digest):
+        return 400, {"ok": False, "error": "no such candidate"}
+    cand = digest[idx].get("candidate", {})
+    try:
+        c = Candidate(**cand)
+    except TypeError:
+        c = Candidate(name=cand.get("name", "?"), source=cand.get("source", ""),
+                      url=cand.get("url", ""), summary=cand.get("summary", ""),
+                      signal_metric=cand.get("signal_metric", ""),
+                      tags=cand.get("tags", []), raw=cand.get("raw", {}))
+    thesis = yaml.safe_load(THESIS_PATH.read_text(encoding="utf-8"))
+    _apply_scorer_provider(body)   # user-chosen LLM provider for this memo
+
+    if not body.get("agent"):      # single-shot memo: fast, stays synchronous
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            md = memo_mod.build_memo(c, thesis)
+        fname = _write_memo_file(c, md)
+        return 200, {"ok": True, "name": fname, "markdown": md, "log": buf.getvalue(),
+                     "scorer": _scorer_label(), "agent": False, "tools": []}
+
+    # Agent memo: can take a while (bounded per-step, but not instant) — run it in the
+    # background and let the UI poll /api/memo/progress for live step-by-step status
+    # instead of blocking this request (S-03: "streams step-by-step progress to the UI").
+    job_id = uuid.uuid4().hex[:12]
+    with _JOBS_LOCK:
+        _JOBS[job_id] = {"status": "running", "trail": []}
+    _start_job(_run_agent_job, job_id, c, thesis)
+    return 200, {"ok": True, "streaming": True, "job_id": job_id}
+
+
+def _api_memo_progress(job_id: str):
+    with _JOBS_LOCK:
+        job = _JOBS.get(job_id)
+        if job is None:
+            return 404, {"error": "no such job"}
+        return 200, dict(job)  # shallow copy — safe to serialize outside the lock
+
+
+def _api_feedback(body: dict):
+    """Record a 👍/👎 (or 'clear') on a digest candidate, by digest index.
+
+    Appends an eval-compatible row to data/feedback.jsonl. 'up' = on-thesis
+    (eval label True), 'down' = off-thesis (False), 'clear' = retract.
+    """
+    label = body.get("label")
+    if label not in ("up", "down", "clear"):
+        return 400, {"ok": False, "error": "label must be up/down/clear"}
+    digest = _read_out_json("digest.json") or []
+    try:
+        idx = int(body.get("index", -1))
+    except (TypeError, ValueError):
+        idx = -1
+    if idx < 0 or idx >= len(digest):
+        return 400, {"ok": False, "error": "no such candidate"}
+    entry = digest[idx]
+    cand = entry.get("candidate", {})
+    eval_label = {"up": True, "down": False, "clear": None}[label]
+    row = {
+        "name": cand.get("name"),
+        "source": cand.get("source"),
+        "summary": cand.get("summary", ""),
+        "tags": cand.get("tags", []),
+        "label": label,            # up | down | clear (audit value)
+        "eval_label": eval_label,  # True | False | None — for seeding eval_set.jsonl
+        "score": entry.get("score"),
+        "ts": datetime.now(timezone.utc).isoformat(),
+    }
+    FEEDBACK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with FEEDBACK_PATH.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row) + "\n")
+    return 200, {"ok": True, "name": row["name"], "votes": _feedback_votes()}
+
+
+def _api_save_thesis(body: dict):
+    # Two ways to save: a structured object from the sectioned editor (preferred —
+    # keeps unknown keys like `updated`), or raw YAML text from the Advanced fallback.
+    if isinstance(body.get("thesis"), dict):
+        try:
+            text = yaml.safe_dump(body["thesis"], sort_keys=False, allow_unicode=True)
+            parsed = yaml.safe_load(text)          # re-parse to validate the round-trip
+            if not isinstance(parsed, dict):
+                raise ValueError("thesis must be a mapping")
+        except (yaml.YAMLError, ValueError) as e:
+            return 400, {"ok": False, "error": f"Invalid thesis: {e}"}
+    else:
+        text = body.get("text", "")
+        try:
+            parsed = yaml.safe_load(text)
+            if not isinstance(parsed, dict):
+                raise ValueError("thesis must be a YAML mapping")
+        except (yaml.YAMLError, ValueError) as e:
+            return 400, {"ok": False, "error": f"Invalid YAML: {e}"}
+    THESIS_PATH.write_text(text, encoding="utf-8")
+    return 200, {"ok": True, "thesisParsed": parsed, "text": text}
+
+
+def dispatch(method: str, url: str, body: dict = None):
+    """Route one API request -> (status, payload). `url` is the path plus optional query string."""
+    route = urlparse(url)
+    path, query = route.path, parse_qs(route.query)
+    method, body = method.upper(), body or {}
+    if method in ("GET", "HEAD"):
+        if path == "/api/state":
+            return 200, build_state()
+        if path == "/api/digest":
+            return 200, _read_out_json("digest.json") or []
+        if path == "/api/backtest":
+            return 200, _read_out_json("backtest_report.json")
+        if path == "/api/memos":
+            return 200, {"memos": _list_memos()}
+        if path == "/api/feedback":
+            return 200, {"votes": _feedback_votes()}
+        if path == "/api/memo":
+            return _api_get_memo(query.get("name", [""])[0])
+        if path == "/api/memo/progress":
+            return _api_memo_progress(query.get("job_id", [""])[0])
+        if path == "/api/thesis":
+            return 200, {"text": THESIS_PATH.read_text(encoding="utf-8")}
+    elif method == "POST":
+        if path == "/api/run":
+            return _api_run(body)
+        if path == "/api/backtest":
+            return _api_backtest()
+        if path == "/api/memo":
+            return _api_make_memo(body)
+        if path == "/api/feedback":
+            return _api_feedback(body)
+    elif method == "PUT":
+        if path == "/api/thesis":
+            return _api_save_thesis(body)
+    return 404, {"error": "not found"}
+
+
+def dispatch_json(method: str, url: str, body_json: str = "") -> str:
+    """dispatch() over JSON strings — the bridge the in-browser (Pyodide) demo calls from JS.
+    Returns {"status": int, "data": payload} serialized; default=str matches the HTTP path."""
+    try:
+        body = json.loads(body_json) if body_json else {}
+    except json.JSONDecodeError:
+        body = {}
+    status, data = dispatch(method, url, body if isinstance(body, dict) else {})
+    return json.dumps({"status": status, "data": data}, default=str)
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "SignalWeb"
 
@@ -273,194 +484,24 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     # ---- routing ----------------------------------------------------------
+    def _api(self, method: str) -> None:
+        body = {} if method == "GET" else self._body()
+        status, data = dispatch(method, self.path, body if isinstance(body, dict) else {})
+        self._json(data, status)
+
     def do_GET(self):
-        route = urlparse(self.path)
-        path, query = route.path, parse_qs(route.query)
+        path = urlparse(self.path).path
         if path == "/" or path == "/index.html":
             return self._static("index.html")
         if path in ("/app.js", "/styles.css"):
             return self._static(path.lstrip("/"))
-        if path == "/api/state":
-            return self._json(self._state())
-        if path == "/api/digest":
-            return self._json(_read_out_json("digest.json") or [])
-        if path == "/api/backtest":
-            return self._json(_read_out_json("backtest_report.json"))
-        if path == "/api/memos":
-            return self._json({"memos": _list_memos()})
-        if path == "/api/feedback":
-            return self._json({"votes": _feedback_votes()})
-        if path == "/api/memo":
-            return self._get_memo(query.get("name", [""])[0])
-        if path == "/api/memo/progress":
-            return self._memo_progress(query.get("job_id", [""])[0])
-        if path == "/api/thesis":
-            return self._json({"text": THESIS_PATH.read_text(encoding="utf-8")})
-        return self._json({"error": "not found"}, 404)
+        return self._api("GET")
 
     def do_POST(self):
-        path = urlparse(self.path).path
-        body = self._body()
-        if path == "/api/run":
-            return self._run(body)
-        if path == "/api/backtest":
-            return self._backtest()
-        if path == "/api/memo":
-            return self._make_memo(body)
-        if path == "/api/feedback":
-            return self._feedback(body)
-        return self._json({"error": "not found"}, 404)
+        return self._api("POST")
 
     def do_PUT(self):
-        if urlparse(self.path).path == "/api/thesis":
-            return self._save_thesis(self._body())
-        return self._json({"error": "not found"}, 404)
-
-    # ---- handlers ---------------------------------------------------------
-    def _state(self) -> dict:
-        return build_state()
-
-    def _run(self, body: dict) -> None:
-        demo = bool(body.get("demo", True))
-        try:
-            limit = max(1, int(body.get("limit", 25)))
-        except (TypeError, ValueError):
-            limit = 25
-        # User-selected signals. A list -> only those contribute; absent/None -> all on.
-        es = body.get("enabled_signals")
-        enabled = {s for s in es if isinstance(s, str)} if isinstance(es, list) else None
-        _apply_scorer_provider(body)   # user-chosen LLM provider for this run
-        buf = io.StringIO()
-        ok, err = True, None
-        try:
-            with contextlib.redirect_stdout(buf):
-                orchestrator.run(demo=demo, limit=limit, enabled_signals=enabled)
-        except Exception as e:  # live sources may fail without keys — surface, don't crash
-            ok, err = False, f"{type(e).__name__}: {e}"
-        self._json({"ok": ok, "error": err, "log": buf.getvalue(),
-                    "scorer": _scorer_label(),  # the scorer that actually ran
-                    "digest": _read_out_json("digest.json") or [],
-                    "sourceHealth": _read_out_json("source_health.json") or []})
-
-    def _backtest(self) -> None:
-        gt = str(ROOT / "data" / "backtest" / "ground_truth.sample.json")
-        buf = io.StringIO()
-        ok, err = True, None
-        try:
-            with contextlib.redirect_stdout(buf):
-                backtest_mod.run(gt)
-        except Exception as e:
-            ok, err = False, f"{type(e).__name__}: {e}"
-        self._json({"ok": ok, "error": err, "log": buf.getvalue(),
-                    "backtest": _read_out_json("backtest_report.json")})
-
-    def _get_memo(self, name: str) -> None:
-        if not name or "/" in name or ".." in name:
-            return self._json({"error": "bad name"}, 400)
-        path = _out_dir() / "memos" / name
-        if not path.is_file():
-            return self._json({"error": "not found"}, 404)
-        self._json({"name": name, "markdown": path.read_text(encoding="utf-8")})
-
-    def _make_memo(self, body: dict) -> None:
-        digest = _read_out_json("digest.json") or []
-        try:
-            idx = int(body.get("index", 0))
-        except (TypeError, ValueError):
-            idx = -1
-        if idx < 0 or idx >= len(digest):
-            return self._json({"ok": False, "error": "no such candidate"}, 400)
-        cand = digest[idx].get("candidate", {})
-        try:
-            c = Candidate(**cand)
-        except TypeError:
-            c = Candidate(name=cand.get("name", "?"), source=cand.get("source", ""),
-                          url=cand.get("url", ""), summary=cand.get("summary", ""),
-                          signal_metric=cand.get("signal_metric", ""),
-                          tags=cand.get("tags", []), raw=cand.get("raw", {}))
-        thesis = yaml.safe_load(THESIS_PATH.read_text(encoding="utf-8"))
-        _apply_scorer_provider(body)   # user-chosen LLM provider for this memo
-
-        if not body.get("agent"):      # single-shot memo: fast, stays synchronous
-            buf = io.StringIO()
-            with contextlib.redirect_stdout(buf):
-                md = memo_mod.build_memo(c, thesis)
-            fname = _write_memo_file(c, md)
-            return self._json({"ok": True, "name": fname, "markdown": md, "log": buf.getvalue(),
-                               "scorer": _scorer_label(), "agent": False, "tools": []})
-
-        # Agent memo: can take a while (bounded per-step, but not instant) — run it in the
-        # background and let the UI poll /api/memo/progress for live step-by-step status
-        # instead of blocking this request (S-03: "streams step-by-step progress to the UI").
-        job_id = uuid.uuid4().hex[:12]
-        with _JOBS_LOCK:
-            _JOBS[job_id] = {"status": "running", "trail": []}
-        threading.Thread(target=_run_agent_job, args=(job_id, c, thesis),
-                         daemon=True).start()
-        self._json({"ok": True, "streaming": True, "job_id": job_id})
-
-    def _memo_progress(self, job_id: str) -> None:
-        with _JOBS_LOCK:
-            job = _JOBS.get(job_id)
-            if job is None:
-                return self._json({"error": "no such job"}, 404)
-            self._json(dict(job))  # shallow copy — safe to serialize outside the lock
-
-    def _feedback(self, body: dict) -> None:
-        """Record a 👍/👎 (or 'clear') on a digest candidate, by digest index.
-
-        Appends an eval-compatible row to data/feedback.jsonl. 'up' = on-thesis
-        (eval label True), 'down' = off-thesis (False), 'clear' = retract.
-        """
-        label = body.get("label")
-        if label not in ("up", "down", "clear"):
-            return self._json({"ok": False, "error": "label must be up/down/clear"}, 400)
-        digest = _read_out_json("digest.json") or []
-        try:
-            idx = int(body.get("index", -1))
-        except (TypeError, ValueError):
-            idx = -1
-        if idx < 0 or idx >= len(digest):
-            return self._json({"ok": False, "error": "no such candidate"}, 400)
-        entry = digest[idx]
-        cand = entry.get("candidate", {})
-        eval_label = {"up": True, "down": False, "clear": None}[label]
-        row = {
-            "name": cand.get("name"),
-            "source": cand.get("source"),
-            "summary": cand.get("summary", ""),
-            "tags": cand.get("tags", []),
-            "label": label,            # up | down | clear (audit value)
-            "eval_label": eval_label,  # True | False | None — for seeding eval_set.jsonl
-            "score": entry.get("score"),
-            "ts": datetime.now(timezone.utc).isoformat(),
-        }
-        FEEDBACK_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with FEEDBACK_PATH.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(row) + "\n")
-        self._json({"ok": True, "name": row["name"], "votes": _feedback_votes()})
-
-    def _save_thesis(self, body: dict) -> None:
-        # Two ways to save: a structured object from the sectioned editor (preferred —
-        # keeps unknown keys like `updated`), or raw YAML text from the Advanced fallback.
-        if isinstance(body.get("thesis"), dict):
-            try:
-                text = yaml.safe_dump(body["thesis"], sort_keys=False, allow_unicode=True)
-                parsed = yaml.safe_load(text)          # re-parse to validate the round-trip
-                if not isinstance(parsed, dict):
-                    raise ValueError("thesis must be a mapping")
-            except (yaml.YAMLError, ValueError) as e:
-                return self._json({"ok": False, "error": f"Invalid thesis: {e}"}, 400)
-        else:
-            text = body.get("text", "")
-            try:
-                parsed = yaml.safe_load(text)
-                if not isinstance(parsed, dict):
-                    raise ValueError("thesis must be a YAML mapping")
-            except (yaml.YAMLError, ValueError) as e:
-                return self._json({"ok": False, "error": f"Invalid YAML: {e}"}, 400)
-        THESIS_PATH.write_text(text, encoding="utf-8")
-        self._json({"ok": True, "thesisParsed": parsed, "text": text})
+        return self._api("PUT")
 
 
 def serve(host: str = "127.0.0.1", port: int = 8000, open_browser: bool = True) -> None:

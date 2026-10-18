@@ -1,6 +1,6 @@
 # Signal — a thesis-driven dealflow sourcing + diligence agent
 
-**Live demo:** **https://yalegend.github.io/signal/** (static dashboard — always on)
+**Live demo:** **https://yalegend.github.io/signal/** (the real app running in your browser via Pyodide — always on, no server)
 
 Signal surfaces early-stage crypto/AI companies **before they're obvious**, scores each against a
 fund's *encoded thesis*, and ships a ranked, source-cited digest — plus a **Phase 0 backtest** that

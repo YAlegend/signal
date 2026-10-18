@@ -283,8 +283,16 @@ def _call_with_timeout(fn, timeout, *args, **kwargs):
     A timeout never raises — the underlying thread is left to finish in the background (its
     result is discarded); this bounds how long the CALLER waits, which is what a step deadline
     needs. An exception raised by fn is caught and returned rather than propagated, matching the
-    existing 'a tool failure is an observation, not a crash' contract."""
-    future = _EXECUTOR.submit(fn, *args, **kwargs)
+    existing 'a tool failure is an observation, not a crash' contract.
+    Where threads don't exist (the in-browser Pyodide demo) the call runs inline, unbounded —
+    only offline tools run there, so there's nothing slow to time out."""
+    try:
+        future = _EXECUTOR.submit(fn, *args, **kwargs)
+    except RuntimeError:  # "can't start new thread"
+        try:
+            return fn(*args, **kwargs), False, None
+        except Exception as e:  # noqa: BLE001 — same contract as the threaded path
+            return None, False, e
     try:
         return future.result(timeout=timeout), False, None
     except concurrent.futures.TimeoutError:

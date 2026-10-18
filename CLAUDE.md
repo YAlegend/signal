@@ -67,10 +67,11 @@ PYTHONPATH=src python -m signalfund.webapp                # add --port 8765 / --
 # 7) Custom MCP server (star-velocity) — for use inside Claude Code via .mcp.json, or standalone:
 python mcp_servers/github_velocity/server.py
 
-# 8) HOSTED DEMOS — static: GitHub Pages (docs/, refresh-demo.yml) at https://yalegend.github.io/signal/
-#   live: Hugging Face Docker Space built from ./Dockerfile (offline demo, heuristic, port 7860),
-#   auto-deployed by .github/workflows/hf-space.yml once secret HF_TOKEN + variable HF_SPACE are set
-#   (skips green until then). Local container: docker build -t signal-demo . && docker run -p 7860:7860 signal-demo
+# 8) HOSTED DEMO — GitHub Pages at https://yalegend.github.io/signal/ (docs/, built by
+#   scripts/build_static_demo.py; refresh-demo.yml weekly, pages.yml deploys). It runs the REAL
+#   signalfund code in the visitor's browser via Pyodide (docs/py/signal.zip): Run (demo), memos,
+#   agent memo, backtest, thesis save + feedback all execute client-side, per-visitor, no server.
+#   Live mode + LLM scorers need the local app (keys + network). Preview: python -m http.server -d docs
 ```
 
 Open `out/digest.md` (the ranked dealflow) or `out/backtest_report.md` (the go/no-go) to see results.

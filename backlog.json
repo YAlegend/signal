@@ -613,11 +613,51 @@
           "done": true
         },
         {
-          "text": "Smoke-test hosted demos (GitHub Pages + Hugging Face Space) + GitHub Actions.",
+          "text": "Smoke-test the hosted demo (GitHub Pages, in-browser via S-16) + GitHub Actions.",
           "done": false
         }
       ],
-      "notes": "Reverted from done — Render + GitHub Actions smoke test (action item 3) was never actually run. Confirmed both before moving back to review. | Render retired (service unreachable; no deploys recorded). Replaced by Hugging Face Docker Space (Dockerfile + hf-space.yml) next to GitHub Pages. Space build+run simulated locally: UI, demo run, backtest, memo, live-no-keys all OK, 0 tracebacks. BLOCKED on user: create HF Space + set HF_TOKEN secret / HF_SPACE variable, then smoke-test the live URL."
+      "notes": "Reverted from done — Render + GitHub Actions smoke test (action item 3) was never actually run. Confirmed both before moving back to review. | Render retired (service unreachable; no deploys recorded). Replaced by Hugging Face Docker Space (Dockerfile + hf-space.yml) next to GitHub Pages. Space build+run simulated locally: UI, demo run, backtest, memo, live-no-keys all OK, 0 tracebacks. BLOCKED on user: create HF Space + set HF_TOKEN secret / HF_SPACE variable, then smoke-test the live URL. | HF Space dropped (needs PRO). Hosted demo is now GitHub Pages running the real code in-browser via Pyodide — see S-16."
+    },
+    {
+      "id": "S-16",
+      "title": "In-browser demo on GitHub Pages (Pyodide)",
+      "epic": "E6",
+      "mos": "Must",
+      "points": 3,
+      "sprint": "Sprint 1",
+      "status": "review",
+      "blockedBy": [],
+      "criteria": [
+        "On the Pages site, Run (demo), memo, agent memo, backtest, thesis save and feedback actually execute the real signalfund code in the visitor's browser.",
+        "The baked digest renders immediately; Python loads in the background and compute actions wait for it.",
+        "Live mode and LLM scorers explain cleanly that they need the local app — no stack traces.",
+        "Local web app behaviour is unchanged (same handlers serve both paths).",
+        "Hugging Face Space setup (workflow, deploy/, Dockerfile) is removed."
+      ],
+      "subtasks": [
+        {
+          "text": "Remove the Hugging Face Space setup (hf-space.yml, deploy/hf-space, Dockerfile, .dockerignore) and its docs.",
+          "done": true
+        },
+        {
+          "text": "Factor webapp request handling into a transport-agnostic dispatch() shared by http.server and the browser.",
+          "done": true
+        },
+        {
+          "text": "Make the diligence agent run inline when threads are unavailable (Pyodide).",
+          "done": true
+        },
+        {
+          "text": "Build step bundles src/config/data/out into docs/py/signal.zip; app.js routes api() calls to Pyodide on Pages.",
+          "done": true
+        },
+        {
+          "text": "Tests for dispatch + no-thread agent; verify the bundle under real Pyodide; update CLAUDE.md/README.",
+          "done": true
+        }
+      ],
+      "notes": "Verified: every route under Pyodide 314.0.7 (Node) + full UI E2E in headless Chrome (run/live-refusal/memo/agent/backtest/thesis, 0 console errors). Digest paints ~0.3s; Python ready ~2.4s warm. Needs push to main for pages.yml to deploy."
     }
   ]
 }
