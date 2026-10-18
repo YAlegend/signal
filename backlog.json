@@ -1,7 +1,7 @@
 {
   "project": "Signal",
   "description": "Thesis-driven dealflow sourcing & diligence agent (early-stage crypto / AI). Scrumban backlog. This file is the single source of truth for project status; the terminal CLI and the HTML board both read it.",
-  "updated": "2026-10-10",
+  "updated": "2026-10-18",
   "meta": {
     "statuses": [
       "backlog",
@@ -596,7 +596,7 @@
       "points": 2,
       "mos": "Must",
       "sprint": "Sprint 1",
-      "status": "inprogress",
+      "status": "review",
       "blockedBy": [],
       "criteria": [
         "The public demo runs end-to-end with zero paid keys.",
@@ -614,10 +614,10 @@
         },
         {
           "text": "Smoke-test the hosted demo (GitHub Pages, in-browser via S-16) + GitHub Actions.",
-          "done": false
+          "done": true
         }
       ],
-      "notes": "Reverted from done — Render + GitHub Actions smoke test (action item 3) was never actually run. Confirmed both before moving back to review. | Render retired (service unreachable; no deploys recorded). Replaced by Hugging Face Docker Space (Dockerfile + hf-space.yml) next to GitHub Pages. Space build+run simulated locally: UI, demo run, backtest, memo, live-no-keys all OK, 0 tracebacks. BLOCKED on user: create HF Space + set HF_TOKEN secret / HF_SPACE variable, then smoke-test the live URL. | HF Space dropped (needs PRO). Hosted demo is now GitHub Pages running the real code in-browser via Pyodide — see S-16."
+      "notes": "Smoke-tested live https://yalegend.github.io/signal/ (Playwright + Chrome, 2026-10-18): Python ready, Run demo -> veritas 69.8, memo, backtest YELLOW, no tracebacks; evals + Pages workflows green. Agent memo with zero keys falls back to the single-shot memo by design (agent.py: no LLM provider -> loop skipped); toast just says 'Memo written'. Only console error: missing favicon.ico 404."
     },
     {
       "id": "S-16",
